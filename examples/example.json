@@ -1,0 +1,16 @@
+[
+	{
+		"FieldName": "Nome",
+		"DataType": "varchar",
+		"Length": "56",
+		"StringType": "FirstName",
+		"RecordsToGenerate": "171"
+	},
+	{
+		"FieldName": "SobreNome",
+		"DataType": "varchar",
+		"Length": "56",
+		"StringType": "SPI",
+		"RecordsToGenerate": "171"
+	}
+]
