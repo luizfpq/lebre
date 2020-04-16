@@ -5,14 +5,14 @@
     with randomly generated content. With this tool you no longer need to write queries or to 
     compile forms by yourself wasting a lot of time before to start to work on your applications.
 """
-__author__ = “Luiz F. P. Quirino”
-__copyright__ = “Copyright 2020, JMIY - Just Make It Yours”
-__credits__ = [“LuizQuirino”]
-__license__ = “MPL 2.0”
-__version__ = “0.1.0”
-__maintainer__ = “LuizQuirino”
-__email__ = “luizfpq@gmail.com”
-__status__ = “Dev”
+__author__ = "Luiz F. P. Quirino"
+__copyright__ = "Copyright 2020, JMIY - Just Make It Yours"
+__credits__ = ["LuizQuirino"]
+__license__ = "MPL 2.0"
+__version__ = "0.1.0"
+__maintainer__ = "LuizQuirino"
+__email__ = "luizfpq@gmail.com"
+__status__ = "Dev"
 
 import json
 import glob
