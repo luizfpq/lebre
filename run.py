@@ -5,12 +5,9 @@
 import json
 import glob
 import os
-from assets.name import *
+from assets.DataLoader import *
 
 
-
-
-#list json files on table folder
 for file in glob.glob("table/*.json"):
     with open(file, 'r') as f:
         table_dict = json.load(f)
@@ -20,6 +17,6 @@ for file in glob.glob("table/*.json"):
             valueList = ''
             DataList = list(table_dict[0]['DataType'].split(","))
             for i in DataList:
-                valueList = valueList + FirstName()
-            
+               valueList = valueList + '\'' + str(DataLoad(i)) + '\', '
+              
             print("insert into {} ({}) values ({})".format(tableName,table_dict[0]['FieldList'],valueList))       
