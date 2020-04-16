@@ -1,6 +1,6 @@
 [
 	{
-		"FieldName": "Nome",
+		"FieldList": "Nome",
 		"DataType": "varchar",
 		"Length": "56",
 		"StringType": "FirstName",

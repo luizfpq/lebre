@@ -1,0 +1,10 @@
+[
+	{
+		"DataType": "FirstName",
+		"DataFile": "Name.py"
+	},
+	{
+        "DataType": "LastName",
+		"DataFile": "Name.py"
+	}
+]
