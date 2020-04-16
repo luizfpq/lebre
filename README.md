@@ -8,10 +8,13 @@ Lebres (Hares in english) are animals that usually represent fertility, they are
 # Using Lebre
 
 If you are using Linux:
+
     ./run.py
 if you are in Windows:
+
     python run.py
 If you are a mac user:
+
     Pay me some coffee, you've money;
     python run.py
 
