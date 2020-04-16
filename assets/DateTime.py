@@ -19,10 +19,12 @@ def str_time_prop(start, end, format, prop):
 
 
 def random_date_time(start, end, prop):
-    return str_time_prop(start, end, '%d/%m/%Y %I:%M %p', prop)
+    randDateTime = str_time_prop(start, end, '%d/%m/%Y %I:%M %p', prop)
+    return '\''+randDateTime+'\''
 
 def random_date(start, end, prop):
-    return str_time_prop(start, end, '%d/%m/%Y', prop)
+    randDate = str_time_prop(start, end, '%d/%m/%Y', prop)
+    return '\''+randDate+'\''
 
 
 #print(random_date("1/1/2008 1:30 PM", "1/1/2009 4:50 AM", random.random()))

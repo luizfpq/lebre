@@ -17,6 +17,7 @@ for file in glob.glob("table/*.json"):
             valueList = ''
             DataList = list(table_dict[0]['DataType'].split(","))
             for i in DataList:
-               valueList = valueList + '\'' + str(DataLoad(i)) + '\', '
+               valueList = valueList + str(DataLoad(i)) + ', '
+               
               
-            print("insert into {} ({}) values ({})".format(tableName,table_dict[0]['FieldList'],valueList))       
+            print("insert into \"{}\" ({}) values ({})".format(tableName,table_dict[0]['FieldList'],valueList[:-2]))       

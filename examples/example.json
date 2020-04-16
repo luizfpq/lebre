@@ -1,16 +1,7 @@
 [
 	{
-		"FieldList": "Nome",
-		"DataType": "varchar",
-		"Length": "56",
-		"StringType": "FirstName",
-		"RecordsToGenerate": "171"
-	},
-	{
-		"FieldName": "SobreNome",
-		"DataType": "varchar",
-		"Length": "56",
-		"StringType": "SPI",
-		"RecordsToGenerate": "171"
+		"FieldList": "'cpf_emp','nome_emp','Sigla_depto_trabalha','dt_inicio','cpf_emp_superior'",
+		"DataType": "CPF,FullName,Varchar,Date,CPF",
+		"RecordsToGenerate": 100
 	}
 ]
