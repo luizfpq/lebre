@@ -6,18 +6,17 @@
     compile forms by yourself wasting a lot of time before to start to work on your applications.
 """
 __author__ = "Luiz F. P. Quirino"
-__copyright__ = "Copyright 2020, JMIY - Just Make It Yours"
+__copyright__ = "Copyleft 2020, Planet Earth"
 __credits__ = ["LuizQuirino"]
-__license__ = "MPL 2.0"
-__version__ = "0.1.0"
+__license__ = "GPL v3"
+__version__ = "0.1.1"
 __maintainer__ = "LuizQuirino"
 __email__ = "luizfpq@gmail.com"
 __status__ = "Dev"
 
 
 import random
-from assets.Name import *
-from assets.Varchar import *
+from assets.TextTypes import *
 from assets.DateTime import *
 
 def DataLoad( dType ):
