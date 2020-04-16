@@ -1,0 +1,7 @@
+[
+	{
+		"FieldList": "num_depto,nomedepto,local",
+		"DataType": "Serial,FirstName,Varchar:15",
+		"RecordsToGenerate": 3
+	}
+]

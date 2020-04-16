@@ -1,7 +1,0 @@
-[
-	{
-		"FieldList": "'id_dpto','nome_dpto','sigla_depto'",
-		"DataType": "Integer,FirstName,Varchar",
-		"RecordsToGenerate": 2
-	}
-]

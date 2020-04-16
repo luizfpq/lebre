@@ -1,7 +1,0 @@
-[
-	{
-		"FieldList": "cpf_emp, nome_emp, Sigla_depto_trabalha, dt_inicio, cpf_emp_superior",
-		"DataType": "Integer,FullName,Varchar:5,Date,Default:'365.036.328-35'",
-		"RecordsToGenerate": 100
-	}
-]

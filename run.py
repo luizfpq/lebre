@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-""" 
-    A Database Populator is a tool which helps you to populate your projects' database tables 
-    with randomly generated content. With this tool you no longer need to write queries or to 
+"""
+    A Database Populator is a tool which helps you to populate your projects' database tables
+    with randomly generated content. With this tool you no longer need to write queries or to
     compile forms by yourself wasting a lot of time before to start to work on your applications.
 """
 __author__ = "Luiz F. P. Quirino"
@@ -24,12 +24,20 @@ for file in glob.glob("table/*.json"):
     with open(file, 'r') as f:
         table_dict = json.load(f)
         tableName = os.path.splitext(os.path.basename(file))[0]
-        
+        serial = 0;
         for i in range(table_dict[0]['RecordsToGenerate']):
             valueList = ''
             DataList = list(table_dict[0]['DataType'].split(","))
-            
-            for i in DataList:
-               valueList = valueList + str(DataLoad(i)) + ', '
 
-            print("insert into \"{}\" ({}) values ({})".format(tableName,table_dict[0]['FieldList'],valueList[:-2]))       
+            for i in DataList:
+                ''' # TODO: need to find a way to put this functionality inside DataLoader
+                    Create a serial id, like an auto increment
+                '''
+                if DataLoad(i) == 'serial':
+                    value = serial
+                    serial = serial + 1
+                else:
+                    value = DataLoad(i);
+                valueList = valueList + str(value) + ', '
+
+            print("insert into \"{}\" ({}) values ({})".format(tableName,table_dict[0]['FieldList'],valueList[:-2]))

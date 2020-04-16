@@ -1,7 +1,0 @@
-[
-	{
-		"FieldList": "'id_user','nome_user','sobrenome_user','aniversario','descricao'",
-		"DataType": "Integer,FirstName,LastName,Date,Varchar",
-		"RecordsToGenerate": 10
-	}
-]

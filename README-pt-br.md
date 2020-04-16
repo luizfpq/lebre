@@ -21,7 +21,7 @@ Se você for um Mac User:
     python run.py
 
 Dentro da pasta "table", crie os arquivos json e nomeie-os como nomes das tabelas
-ex: 
+ex:
 
     Tabela username → username.json
     Tabela employee → employee.json
@@ -37,7 +37,7 @@ Preenchendo os arquivos JSON:
 
  - Para o "FieldList" os nomes dos arquivos são atributos herdados dos atributos da tabela, então copie os nomes deles, exatamente como estão na tabela.
 
- - Para o "DataType" basta olhar a lista de tipos de dados abaixo e relacioná-los com seus campos, de forma que o dado escolhido seja compatível com o preenchimento do campo na tupla. 
+ - Para o "DataType" basta olhar a lista de tipos de dados abaixo e relacioná-los com seus campos, de forma que o dado escolhido seja compatível com o preenchimento do campo na tupla.
 
  - Em "RecordsToGenerate" defina um número inteiro para definir o número de inserções a serem feitas.
 
@@ -45,6 +45,7 @@ Preenchendo os arquivos JSON:
 Tipos de dados é um conjunto de dados que colocaremos nos campos da tabela, nosso código encontrará os dados e os definirá com base em um tipo definido por um desses:
 
  #### Tipos Primitivos
+    Serial
     Varchar
     Char
     Text    
@@ -68,8 +69,7 @@ Tipos de dados é um conjunto de dados que colocaremos nos campos da tabela, nos
     LastName
     FullName
     CPF
-    
+
 
 ## Dependências
         Python 3.7
-        

@@ -18,7 +18,7 @@ If you are a mac user:
     #Pay me some coffee, you've money;
     python run.py
 
-Inside the "table" folder create the json files and name them as the tables names ex: 
+Inside the "table" folder create the json files and name them as the tables names ex:
 
     Table username → username.json
     Table employee → employee.json
@@ -42,6 +42,7 @@ Filling in the json files:
 Data Types is a set of data which we'll put on table fields, our code will find the data and set it based on a type set by one of those:
 
  #### Raw Types
+    Serial
     Varchar
     Char
     Text    
@@ -65,8 +66,7 @@ Data Types is a set of data which we'll put on table fields, our code will find 
     LastName
     FullName
     CPF
-    
+
 
 ## Depends
         Python 3.7
-        
