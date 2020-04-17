@@ -37,6 +37,10 @@ def DataLoad( dType ):
         return random_char(int(dType.split(":")[1])).upper()
     if dType == 'Date':
         return random_date("1/1/1970", "1/1/2000", random.random())
+    if dType == 'Address':
+        return Address()
+    if "StateProvince" in dType:
+        return StateProvince()
 
 
 

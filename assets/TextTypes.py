@@ -37,22 +37,42 @@ def CPF():
 
 
 def FirstName():
-    lines = open('./assets/FirstName.txt').read().splitlines()
-    myline = random.choice(lines)
-    myline = myline.split(",")[0]
+    lines = open('./datasources/FirstNameBR.txt').read().splitlines()
+    myline = random.choice(lines).capitalize()
+    myline = myline.split(",")[0].capitalize()
     return '\''+myline+'\''
 
 def LastName():
-    lines = open('./assets/LastName.txt').read().splitlines()
-    myline = random.choice(lines)
+    lines = open('./datasources/LastNameBR.txt').read().splitlines()
+    myline = random.choice(lines).capitalize()
     myline = myline.split(",")[0]
     return '\''+myline+'\''
 
 def FullName():
-    lines = open('./assets/FirstName.txt').read().splitlines()
-    myline = random.choice(lines)
+    lines = open('./datasources/FirstNameBR.txt').read().splitlines()
+    myline = random.choice(lines).capitalize()
     myline = myline.split(",")[0]
-    lines = open('./assets/LastName.txt').read().splitlines()
-    myline = myline + ' ' + random.choice(lines)
+    lines = open('./datasources/LastNameBR.txt').read().splitlines()
+    myline = myline + ' ' + random.choice(lines).capitalize()
+    myline = myline.split(",")[0]
+    return '\''+myline+'\''
+
+def Address():
+    lines = open('./datasources/AddressTypeBR.txt').read().splitlines()
+    myline = random.choice(lines)
+    myline = myline.split(",")[0].capitalize()
+
+    lines = open('./datasources/FirstNameBR.txt').read().splitlines()
+    myline = myline + ' ' + random.choice(lines).capitalize()
+    myline = myline.split(",")[0]
+    
+    #lines = open('./datasources/LastNameBR.txt').read().splitlines()
+    #myline = myline + ' ' + random.choice(lines)
+    #myline = myline.split(",")[0]
+    return '\''+myline+'\''
+
+def StateProvince():
+    lines = open('./datasources/StateProvinceBR.txt').read().splitlines()
+    myline = random.choice(lines)
     myline = myline.split(",")[0]
     return '\''+myline+'\''
