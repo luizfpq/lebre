@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-""" 
-    A Database Populator is a tool which helps you to populate your projects' database tables 
-    with randomly generated content. With this tool you no longer need to write queries or to 
+"""
+    A Database Populator is a tool which helps you to populate your projects' database tables
+    with randomly generated content. With this tool you no longer need to write queries or to
     compile forms by yourself wasting a lot of time before to start to work on your applications.
 
 
@@ -35,17 +35,31 @@ def CPF():
     block_4 = str(randint(0, 99)).rjust(2, "0")
     return '\''+block_1+'.'+block_2+'.'+block_3+'-'+block_4+'\''
 
+def InitName():
+    lines = open('./assets/FirstName.txt').read().splitlines()
+    myline = random.choice(lines)
+    myline = myline.split(",")[0]
+    myline = myline[0]
+    return '\''+myline+'\''
 
 def FirstName():
+<<<<<<< HEAD
     lines = open('./datasources/FirstNameBR.txt').read().splitlines()
     myline = random.choice(lines).capitalize()
     myline = myline.split(",")[0].capitalize()
+=======
+    lines = open('./assets/FirstName.txt').read().splitlines()
+    myline = random.choice(lines)
+    myline = myline.split(",")[0]
+    myline = str(myline.split()[0])
+>>>>>>> initName
     return '\''+myline+'\''
 
 def LastName():
     lines = open('./datasources/LastNameBR.txt').read().splitlines()
     myline = random.choice(lines).capitalize()
     myline = myline.split(",")[0]
+    myline = str(myline.split()[0])
     return '\''+myline+'\''
 
 def FullName():
