@@ -1,7 +1,7 @@
 [
 	{
-		"FieldList": "numemp, nomeemp, salario, depto",
-		"DataType": "Serial,FullName,Integer:900:12000,Integer:1:3",
-		"RecordsToGenerate": 10
+		"FieldList": "numemp, salario,depto,endereco,pnome,minicial,unome,datamasc,sexo,supervisor",
+		"DataType": "Serial,Integer:900:12000,Integer:0:2,Varchar:6,FirstName,InitName,LastName,Date,Default:'M',Integer:0:9",
+		"RecordsToGenerate": 20
 	}
 ]

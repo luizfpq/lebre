@@ -26,6 +26,8 @@ def DataLoad( dType ):
         return  LastName()
     if dType == 'FullName':
         return  FullName()
+    if dType == 'InitName':
+            return  InitName()
     if dType == 'Serial':
         return  'serial'
     if 'Integer' in dType:
