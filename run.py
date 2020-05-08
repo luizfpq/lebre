@@ -40,7 +40,8 @@ for file in glob.glob("table/*.json"):
                     value =  valueList[-1][:1]
                     print(valueList[-4])
                 else:
-                    value = DataLoad(i);
+                    value = DataLoad(i)
+                    
                 valueList = valueList + str(value) + ', '
 
             print("insert into \"{}\" ({}) values ({})".format(tableName,table_dict[0]['FieldList'],valueList[:-2]))
