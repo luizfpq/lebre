@@ -60,15 +60,16 @@ Tipos de dados é um conjunto de dados que colocaremos nos campos da tabela, nos
     Year
 
  #### Tipos Complexos
-    Address
-    CityName
-    StateProvince
-    Country
-    Email
-    FirstName
-    LastName
-    FullName
-    CPF
+    Address → Tipo endereço, não coloca numero, apenas tipo de endereço e nome aleatorio
+    CityName → Nome da Cidade aleatório, independente de estado  <Será implementada a interdenpendencia, cidade - estado e país>
+    StateProvince → Nome de estado indepentende de cidade ou país <Será implementada a interdenpendencia, cidade - estado e país>
+    Country → Nome do país <Será implementada a interdenpendencia, cidade - estado e país>
+    Email → nome de email aleatório implementado com o formato nome.sobrenome@server.address
+    FirstName → Primeiro nome
+    LastName → Ultimo Nome
+    FullName → Nome completo
+    CPF → Cadastro de Pessoa Fisica 
+    Sex → Sexo, pode ser customizado segundo referencia no arquivo DataLoader
 
 
 ## Dependências

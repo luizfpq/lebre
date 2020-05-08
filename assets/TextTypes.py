@@ -35,12 +35,21 @@ def CPF():
     block_4 = str(randint(0, 99)).rjust(2, "0")
     return '\''+block_1+'.'+block_2+'.'+block_3+'-'+block_4+'\''
 
+'''
+    Still in development, it is necessary to check scopes, for now, returns a string 
+    that returns the first character of the FirstName field
+
+    TODO: change type to one that gets specified string in field list permits to get 
+    FirstName initial, LastName initial or any field to make initial letters combinations
+'''
+
 def InitName():
-    lines = open('./assets/FirstName.txt').read().splitlines()
-    myline = random.choice(lines)
-    myline = myline.split(",")[0]
-    myline = myline[0]
-    return '\''+myline+'\''
+    #lines = open('./datasources/FirstNameBR.txt').read().splitlines()
+    #myline = random.choice(lines)
+    #myline = myline.split(",")[0]
+    #myline = myline[0]
+    #return '\''+myline+'\''
+    return 'initname'
 
 def FirstName():
     lines = open('./datasources/FirstNameBR.txt').read().splitlines()
@@ -62,6 +71,11 @@ def FullName():
     lines = open('./datasources/LastNameBR.txt').read().splitlines()
     myline = myline + ' ' + random.choice(lines).capitalize()
     myline = myline.split(",")[0]
+    return '\''+myline+'\''
+
+def Sex():
+    lines = open('./datasources/Sex.txt').read().splitlines()
+    myline = random.choice(lines).capitalize()
     return '\''+myline+'\''
 
 def Address():

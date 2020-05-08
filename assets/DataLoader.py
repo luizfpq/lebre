@@ -28,10 +28,22 @@ def DataLoad( dType ):
         return  FullName()
     if dType == 'InitName':
             return  InitName()
+
+''' 
+    Change the datasource Sex.txt, to use your definition os sex field
+    Ex:
+        Female, Male;
+        F, M;
+        Gender Free, Man, None, Queer, Woman;
+'''
+    if dType == 'Sex':
+        return  Sex()
     if dType == 'Serial':
         return  'serial'
     if 'Integer' in dType:
         return random.randint(int(dType.split(":")[1]), int(dType.split(":")[2]))
+    # Not validating CPF
+    #TODO: do a valid CPF
     if dType == 'CPF':
         return CPF()
     # Use: Varchar:size

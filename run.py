@@ -36,6 +36,9 @@ for file in glob.glob("table/*.json"):
                 if DataLoad(i) == 'serial':
                     value = serial
                     serial = serial + 1
+                elif DataLoad(i) == 'initname':
+                    value =  valueList[-1][:1]
+                    print(valueList[-4])
                 else:
                     value = DataLoad(i);
                 valueList = valueList + str(value) + ', '
