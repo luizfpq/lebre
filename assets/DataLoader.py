@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 """
-    A Database Populator is a tool which helps you to populate your projects' database tables
-    with randomly generated content. With this tool you no longer need to write queries or to
-    compile forms by yourself wasting a lot of time before to start to work on your applications.
+    Dataloader defines data types and load them all from datasource files
 """
 __author__ = "Luiz F. P. Quirino"
 __copyright__ = "Copyleft 2020, Planet Earth"
@@ -16,7 +14,9 @@ __status__ = "Dev"
 
 
 import random
+''' TextTypes reponses for all nom numeric data'''
 from assets.TextTypes import *
+''' DateTime responses for all DateTime based data'''
 from assets.DateTime import *
 
 def DataLoad( dType ):

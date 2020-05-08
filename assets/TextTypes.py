@@ -43,16 +43,9 @@ def InitName():
     return '\''+myline+'\''
 
 def FirstName():
-<<<<<<< HEAD
     lines = open('./datasources/FirstNameBR.txt').read().splitlines()
     myline = random.choice(lines).capitalize()
     myline = myline.split(",")[0].capitalize()
-=======
-    lines = open('./assets/FirstName.txt').read().splitlines()
-    myline = random.choice(lines)
-    myline = myline.split(",")[0]
-    myline = str(myline.split()[0])
->>>>>>> initName
     return '\''+myline+'\''
 
 def LastName():
@@ -79,7 +72,7 @@ def Address():
     lines = open('./datasources/FirstNameBR.txt').read().splitlines()
     myline = myline + ' ' + random.choice(lines).capitalize()
     myline = myline.split(",")[0]
-    
+
     #lines = open('./datasources/LastNameBR.txt').read().splitlines()
     #myline = myline + ' ' + random.choice(lines)
     #myline = myline.split(",")[0]
