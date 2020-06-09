@@ -1,8 +1,9 @@
 [
-	{
-		"TableName": "tbl_aluno",
-		"FieldList": "id_aluno, situacao, id_usuario",
-		"DataType": "Integer:1000:9999,Default:'null',Serial:5",
-		"RecordsToGenerate": 15
-	}
-]
+	[
+		{
+			"TableName": "tbl_aluno",
+			"FieldList": "id_aluno,cpf,nome,sobrenome, endereco, cidade, estado",
+			"DataType": "Serial:500,CPF,FirstName,LastName,Address:Num, City, StateProvince",
+			"RecordsToGenerate": 50
+		}
+	]

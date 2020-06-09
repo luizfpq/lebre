@@ -24,7 +24,7 @@ for file in glob.glob("table/*.json"):
         table_dict = json.load(f)
         tableName = table_dict[0]['TableName']
         recordsToGenerate = table_dict[0]['RecordsToGenerate']
-
+        CountFieldListSize =  len(list(table_dict[0]['FieldList'].split(",")))
         '''
             A estratégia usada é de criar um conjunto de listas para cada tipo de dados recebido no DataType
             Sendo assim, temos os parametros disponíveis para receber os campos que dependam entre si, como por exemplo,
@@ -33,18 +33,20 @@ for file in glob.glob("table/*.json"):
             # TODO: criar uma estrutura de chaves estrangeiras no json da tabela de modo que uma chave
             estrangeira possa ser consultada e definida mantendo a consistencia da tabela.
         '''
-        ''' ValueList receberá uma lista de listas com os valores devolvidos pelos generators '''
-        ValueList = []
+        ''' ValueDict receberá uma lista de listas com os valores devolvidos pelos generators '''
+        ValueDict = []
         ''' DataList recebe uma lista com os tipos de dados que iremos utilizar '''
         DataList = list(table_dict[0]['DataType'].split(","))
-        for i in DataList:
-            values = DataLoad(recordsToGenerate, i)
-            ValueList.append(values)
+        for item in DataList:
+            values = DataLoad(recordsToGenerate, item.strip(), ValueDict)
+            ValueDict.append(values)
+
         #percorre todas as linhas da lista
-        for i in range(len(ValueList)):
+        for i in range(recordsToGenerate):
             values = ''
             #percorre todos os campos da sublista
-            for j in range(len(ValueList[i])):
-                values = values + str(ValueList[j][i]) + ', '
-                print ("[{}] [{}]".format(i,j))
+            FieldValue = 0
+            while (FieldValue < CountFieldListSize):
+                values = values + str(ValueDict[FieldValue][i]) + ', '
+                FieldValue += 1
             print("insert into \"{}\" ({}) values ({})".format(tableName,table_dict[0]['FieldList'],values[:-2]))

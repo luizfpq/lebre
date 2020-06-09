@@ -1,8 +1,8 @@
 [
 	{
 		"TableName": "tbl_aluno",
-		"FieldList": "id_aluno, situacao, id_usuario",
-		"DataType": "Integer:1000:9999,FullName,Serial:2",
-		"RecordsToGenerate": 4
+		"FieldList": "id_aluno, cpf, nome, inicial, sobrenome, endereco, cidade, estado",
+		"DataType": "Serial:500,CPF,FullName, UserName, LastName,Address:Num, City, StateProvince:Find",
+		"RecordsToGenerate": 50
 	}
 ]

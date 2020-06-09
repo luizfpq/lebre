@@ -20,9 +20,6 @@ def Integer(recordsToGenerate, arg):
         dataList.append(random.randint(int(arg.split(":")[1]), int(arg.split(":")[2])))
     return dataList
 
-#
-# Use: serial:int_initial_value
-#  ex: serial:10
 def Serial(recordsToGenerate, arg):
     dataList = []
     # atribui o valor inicial do serial(autoincremento)
