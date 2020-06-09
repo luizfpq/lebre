@@ -1,7 +1,9 @@
 [
-	{
-		"FieldList": "'cpf_emp','nome_emp','Sigla_depto_trabalha','dt_inicio','cpf_emp_superior'",
-		"DataType": "CPF,FullName,Varchar,Date,CPF",
-		"RecordsToGenerate": 100
-	}
-]
+	[
+		{
+			"TableName": "tbl_aluno",
+			"FieldList": "id_aluno,cpf,nome,sobrenome, endereco, cidade, estado",
+			"DataType": "Serial:500,CPF,FirstName,LastName,Address:Num, City, StateProvince",
+			"RecordsToGenerate": 50
+		}
+	]

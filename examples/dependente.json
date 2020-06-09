@@ -1,7 +1,0 @@
-[
-	{
-		"FieldList": "nome_dependente,sexo,datanasc,parentesco,numemp,id",
-		"DataType": "FullName,Default:'M',Date,Default:'Filho',Integer:1:10,Serial",
-		"RecordsToGenerate": 30
-	}
-]
