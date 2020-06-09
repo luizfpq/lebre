@@ -161,7 +161,6 @@ def StateProvince(recordsToGenerate, dType, ValueDict):
         if ":" in dType:
             if 'Find' in dType:  
                 lines = search_string_in_file('./datasources/CityBR.txt', str(ValueDict[-1][i].replace("'", '')))
-                print(lines)
                 myline = lines.split(",")[0]
         else:
             lines = open('./datasources/StateProvinceBR.txt').read().splitlines()
