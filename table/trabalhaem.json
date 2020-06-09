@@ -1,7 +1,0 @@
-[
-	{
-		"FieldList": "enum, pnum, horas_trabalhadas",
-		"DataType": "Integer:0:9,Integer:0:4,Integer:20:40",
-		"RecordsToGenerate": 15
-	}
-]

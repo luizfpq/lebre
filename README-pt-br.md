@@ -20,20 +20,23 @@ Se você for um Mac User:
     #Pague um cafezinho, 'cê' tem grana;
     python run.py
 
-Dentro da pasta "table", crie os arquivos json e nomeie-os como nomes das tabelas
+Dentro da pasta "table", crie os arquivos json e nomeie-os com uma sequência numérica para que sejam criados na ordem de interdenpendencia, de acordo com a seguinte sugestão:
 ex:
 
-    Tabela username → username.json
-    Tabela employee → employee.json
+    Tabela employee → 00_employee.json
+    Tabela username → 01_username.json
 
 
 Preenchendo os arquivos JSON:
 
     {
-		"FieldList": "fieldName0, fieldName1, fieldName2, fieldName3, fieldName4",
-		"DataType": "CPF,FullName,Varchar,Date,CPF",
-		"RecordsToGenerate": 100
+        "TablaName": "tbl_name",
+		    "FieldList": "fieldName0, fieldName1, fieldName2, fieldName3, fieldName4",
+		    "DataType": "CPF,FullName,Varchar,Date,CPF",
+		    "RecordsToGenerate": 100
 	}
+
+ - Para o "TableName" o nome da tabela onde ocorrerão as inserções.
 
  - Para o "FieldList" os nomes dos arquivos são atributos herdados dos atributos da tabela, então copie os nomes deles, exatamente como estão na tabela.
 
@@ -68,7 +71,7 @@ Tipos de dados é um conjunto de dados que colocaremos nos campos da tabela, nos
     FirstName → Primeiro nome
     LastName → Ultimo Nome
     FullName → Nome completo
-    CPF → Cadastro de Pessoa Fisica 
+    CPF → Cadastro de Pessoa Fisica
     Sex → Sexo, pode ser customizado segundo referencia no arquivo DataLoader
 
 

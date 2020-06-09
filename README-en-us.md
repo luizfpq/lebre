@@ -20,17 +20,20 @@ If you are a mac user:
 
 Inside the "table" folder create the json files and name them as the tables names ex:
 
-    Table username → username.json
-    Table employee → employee.json
+    Table employee → 00_employee.json
+    Table username → 01_username.json
 
 
 Filling in the json files:
 
     {
-		"FieldList": "fieldName0, fieldName1, fieldName2, fieldName3, fieldName4",
-		"DataType": "CPF,FullName,Varchar,Date,CPF",
-		"RecordsToGenerate": 100
+        "TableName": "tbl_name",
+		    "FieldList": "fieldName0, fieldName1, fieldName2, fieldName3, fieldName4",
+		    "DataType": "CPF,FullName,Varchar,Date,CPF",
+		    "RecordsToGenerate": 100
 	}
+
+ For "TableName", use the name of the table where the insertions will occur.
 
  - For "FieldList" the fieldNames are atributes inherited from table atributes, so just copy from them.
 

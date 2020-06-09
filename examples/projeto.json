@@ -1,7 +1,0 @@
-[
-	{
-		"FieldList": "projnum, projnome, projlocal, dnum",
-		"DataType": "Serial,LastName,Varchar:15,Integer:0:2",
-		"RecordsToGenerate": 5
-	}
-]
