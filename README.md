@@ -13,4 +13,4 @@ Lebres (Hares in english) are animals that usually represent fertility, they are
  - [ENGLISH (en-us)](README-en-us.md)
  - [PORTUGUÊS (pt-br)](README-pt-br.md)
 
-<a href="https://icons8.com/icon/95136/owl">Owl icon by Icons8</a>
+<a href="https://icons8.com/icon/95136/owl">Lebre icon by Icons8</a>
