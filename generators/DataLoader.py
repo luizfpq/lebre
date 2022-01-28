@@ -75,50 +75,21 @@ def DataLoad(recordsToGenerate, dType, ValueDict):
     '''
     if "Address" in dType:
         return Address(recordsToGenerate, dType)
-    ''' 
-        USO: 
-            caso queira definir uma cidade de estado específico
-            adicione a sigla do estado desejado em maiusculo
-                City:SP
-            caso queira apenas uma cidade aleatória
-                City
-    '''
     if "City" in dType:
-        return City(recordsToGenerate, dType, ValueDict)
-    ''' 
-        USO: 
-            caso queira apenas um estado aleatório
-                StateProvince
-            caso queira que o estado seja compatível
-            com a cidade aleatória
-                StateProvince:Find
-            NUNCA USE O FIND COM recordsToGenerate > 50
-            isso causa um estouro nos indices das listas usadas
-            
-    '''
-    
+        return City(recordsToGenerate, dType, ValueDict)   
     if "StateProvince" in dType:
         return StateProvince(recordsToGenerate, dType, ValueDict)
+
     '''
         NumericTypes
     '''
-    '''
-        USO:
-            caso queira definir um valor inicial
-                Serial:10
-            caso queira iniciar do zero
-                Serial
-    '''
     if 'Serial' in dType:
         return Serial(recordsToGenerate, dType)
-    '''
-        USO: 
-            Integer:min_value:max_value
-            ex:
-                Integer:0:10
-    '''
+    
     if 'Integer' in dType:
         return Integer(recordsToGenerate, dType)
+
+
     '''
         DateTimeTypes
     '''

@@ -1,9 +1,6 @@
-[
-	[
-		{
-			"TableName": "tbl_aluno",
-			"FieldList": "id_aluno,cpf,nome,sobrenome, endereco, cidade, estado",
-			"DataType": "Serial:500,CPF,FirstName,LastName,Address:Num, City, StateProvince",
-			"RecordsToGenerate": 50
-		}
-	]
+[{
+    "TableName": "tbl_pessoa",
+    "FieldList": "id_aluno,cpf,nome,sobrenome, endereco, cidade, estado",
+    "DataType": "Serial:500,CPF,FirstName,LastName,Address:Num, City, StateProvince",
+    "RecordsToGenerate": 50
+}]

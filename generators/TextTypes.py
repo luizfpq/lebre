@@ -30,10 +30,11 @@ def random_char(y):
 
 def search_string_in_file(file_name, string_to_search):
     """
-        Search for the given string in file and return lines containing that string,
-        along with line numbers"""
+       Busca a string no arquivo e retorna uma lista filtrada apenas com a presença desta string
+    """
     line_number = 0
     list_of_results = []
+    
     # Open the file in read only mode
     with open(file_name, 'r') as read_obj:
         # Read all lines in the file one by one
@@ -42,19 +43,25 @@ def search_string_in_file(file_name, string_to_search):
             line_number += 1
             if str(string_to_search) in str(line):
             # If yes, then add the line number & line as a tuple in the list
-                list_of_results.append(line)
+                list_of_results.append(line)                
     # Return list of tuples containing line numbers and lines where string is found
-    return list_of_results[0]
+    return list_of_results
 
-# TODO generate valid cpf
+
 def CPF(recordsToGenerate, dType):
+    '''
+    Gera o cadastro de pessoas físicas, com um valor validável
+    '''
     dataList = []
     for i in range(recordsToGenerate):
-        block_1 = str(randint(0, 999)).rjust(3, "0")
-        block_2 = str(randint(0, 999)).rjust(3, "0")
-        block_3 = str(randint(0, 999)).rjust(3, "0")
-        block_4 = str(randint(0, 99)).rjust(2, "0")
-        dataList.append('\''+block_1+'.'+block_2+'.'+block_3+'-'+block_4+'\'')
+        cpf = [random.randint(0, 9) for x in range(9)]                              
+                                                                                    
+        for _ in range(2):                                                          
+            val = sum([(len(cpf) + 1 - i) * v for i, v in enumerate(cpf)]) % 11      
+                                                                                    
+            cpf.append(11 - val if val > 1 else 0)                                  
+
+        dataList.append('%s%s%s.%s%s%s.%s%s%s-%s%s' % tuple(cpf))
     return dataList
 
 #def InitName(recordsToGenerate, dType, ValueDict):
@@ -91,9 +98,11 @@ def UserName(recordsToGenerate, dType, ValueDict):
                 number = str(randint(0, 999999)).rjust(6, "0")
                 myline = myline + ', ' + number
         else:
-            myline = str(ValueDict[-1][i][1]) +str(ValueDict[-1][i][2]) +str(ValueDict[-1][i][3]) +str(ValueDict[-1][i][-3]) +str(ValueDict[-1][i][-2]) +str(ValueDict[-1][i][-1])
+            myline = str(ValueDict[-1][i][1]) +str(ValueDict[-1][i][2]) +str(ValueDict[-1][i][3]) +str(ValueDict[-1][i][-4]) +str(ValueDict[-1][i][-3]) +str(ValueDict[-1][i][-2])
+            
             myline = myline.split(",")[0].lower()
-        dataList.append('\''+myline+'\'')
+            
+        dataList.append('\''+myline+'\'')        
     return dataList    
 
 def LastName(recordsToGenerate, dType):
@@ -147,29 +156,64 @@ def Address(recordsToGenerate, dType):
     return dataList
 
 def City(recordsToGenerate, dType, ValueDict):
+    ''' 
+        USO: 
+            caso queira definir uma cidade de estado específico
+            adicione a sigla do estado desejado em maiusculo
+                City:SP
+            caso queira apenas uma cidade aleatória
+                City
+    '''
     dataList = []
     for i in range(recordsToGenerate):
-        lines = open('./datasources/CityBR.txt').read().splitlines()
-        myline = random.choice(lines)
-        myline = myline.split(",")[2]
+        if ":" in dType:
+           lines = search_string_in_file('./datasources/CityBR.txt',  str(dType.split(":")[1] ))
+           myline = random.choice(lines)
+           myline = myline.split(",")[2].replace("\n", "")
+        else:
+            lines = open('./datasources/CityBR.txt').read().splitlines()
+            myline = random.choice(lines)
+            myline = myline.split(",")[2]
         dataList.append('\''+myline+'\'')
     return dataList
 
 def StateProvince(recordsToGenerate, dType, ValueDict):
+    ''' 
+        USO: 
+            Caso queira apenas um estado aleatório
+                StateProvince
+            Caso queira um estado específico, use o tipo "Default",
+            e adicione a sigla do estado desejado em maiusculo
+                Default:SP
+            Caso queira que o estado seja compatível com a cidade aleatória
+                StateProvince:Find
+            
+            IMPORTANTE
+            NUNCA USE O FIND COM recordsToGenerate > 50
+            isso causa um estouro nos indices das listas usadas
+            
+    '''
     dataList = []
     for i in range(recordsToGenerate):
         if ":" in dType:
             if 'Find' in dType:  
-                lines = search_string_in_file('./datasources/CityBR.txt', str(ValueDict[-1][i].replace("'", '')))
-                myline = lines.split(",")[0]
+                lines = search_string_in_file('./datasources/CityBR.txt',  str(ValueDict[-1][i].replace("'", '') ))
+                myline = str(lines[0])
+                myline = myline.split(",")[0].replace("\n", "")
+            else:
+                lines = search_string_in_file('./datasources/CityBR.txt',  str(dType.split(":")[1] ))
+                myline = random.choice(lines)
+                myline = myline.split(",")[0].replace("\n", "")
+                
         else:
             lines = open('./datasources/StateProvinceBR.txt').read().splitlines()
             myline = random.choice(lines)
-            myline = myline.split(",")[0]
+            #myline = myline.split(",")[0]
         dataList.append(str('\''+myline+'\''))
     return dataList
 
 def Varchar(recordsToGenerate, dType):
+
     dataList = []
     for i in range(recordsToGenerate):
         dataList.append(random_char(int(dType.split(":")[1])).upper())
