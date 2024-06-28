@@ -19,9 +19,8 @@ __maintainer__ = "LuizQuirino"
 __email__ = "luizfpq@gmail.com"
 __status__ = "Dev"
 
-
-from random import randint
 import random
+from random import randint
 import string
 
 def random_char(y):
@@ -70,13 +69,78 @@ def CPF(recordsToGenerate, dType):
 #        
 #    return dataList
 
-def FirstName(recordsToGenerate, dType):
+def FullName(recordsToGenerate, dType):
+    """
+    Gera uma lista de nomes completos a partir do arquivo FullNameBR.txt.
+    """
+    dataList = []
+    lines = open('./datasources/FullNameBR.txt').read().splitlines()
+    for i in range(recordsToGenerate):
+        myline = random.choice(lines).strip()
+        dataList.append(f"'{myline}'")
+    return dataList
+
+def FirstName(recordsToGenerate, dType, ValueDict):
+    """
+    Gera uma lista de primeiros nomes a partir da lista de nomes completos.
+    """
     dataList = []
     for i in range(recordsToGenerate):
-        lines = open('./datasources/FirstNameBR.txt').read().splitlines()
-        myline = random.choice(lines).capitalize()
-        myline = myline.split(",")[0].capitalize()
-        dataList.append('\''+myline+'\'')
+        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+        if not fullname:
+            continue  # Ignore se fullname for None ou vazio
+
+        firstname = fullname.split()[0].strip("'")
+        dataList.append(f"'{firstname}'")
+    return dataList
+
+
+def LastName(recordsToGenerate, dType, ValueDict):
+    """
+    Gera uma lista de sobrenomes a partir da lista de nomes completos.
+    """
+    dataList = []
+    for i in range(recordsToGenerate):
+        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+        if not fullname:
+            continue  # Ignore se fullname for None ou vazio
+
+        lastname = fullname.split()[-1].strip("'")
+        dataList.append(f"'{lastname}'")
+    return dataList
+
+
+def UserName(recordsToGenerate, dType, ValueDict):
+    """
+    Gera uma lista de nomes de usuário a partir da lista de nomes completos.
+    """
+    dataList = []
+    for i in range(recordsToGenerate):
+        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+        if not fullname:
+            continue  # Ignore se fullname for None ou vazio
+
+        fullname = fullname.strip("'")  # Remove aspas externas
+        parts = fullname.split()
+        username = (parts[0][0] + parts[-1]).lower()  # Primeiro caractere do primeiro nome + sobrenome
+        if ":" in dType:
+            if 'Num' in dType:
+                number = str(randint(0, 999999)).rjust(6, "0")
+                username = username + number
+        dataList.append(f"'{username}'")
+    return dataList
+
+
+def Email(recordsToGenerate, dType, ValueDict):
+    """
+    Gera uma lista de emails a partir da lista de nomes completos.
+    """
+    dataList = []
+    for i in range(recordsToGenerate):
+        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+        parts = fullname.strip("'").split()
+        email = (parts[0] + '.' + parts[-1]).lower() + "@example.com"  # Primeiro nome + ponto + sobrenome + @example.com
+        dataList.append(f"'{email}'")
     return dataList
 
 # TODO migrar listas para dicionarios
@@ -86,44 +150,6 @@ def InitName(recordsToGenerate, dType, ValueDict):
         # recebemos o primeiro caracter do ultimo nome usado na lista
         myline = str(ValueDict[-1][i][1])
         myline = myline.split(",")[0].capitalize()
-        dataList.append('\''+myline+'\'')
-    return dataList
-
-def UserName(recordsToGenerate, dType, ValueDict):
-    dataList = []
-    for i in range(recordsToGenerate):
-        # recebemos o primeiro caracter do ultimo nome usado na lista
-        if ":" in dType:
-            if 'Num' in dType:
-                number = str(randint(0, 999999)).rjust(6, "0")
-                myline = myline + ', ' + number
-        else:
-            myline = str(ValueDict[-1][i][1]) +str(ValueDict[-1][i][2]) +str(ValueDict[-1][i][3]) +str(ValueDict[-1][i][-4]) +str(ValueDict[-1][i][-3]) +str(ValueDict[-1][i][-2])
-            
-            myline = myline.split(",")[0].lower()
-            
-        dataList.append('\''+myline+'\'')        
-    return dataList    
-
-def LastName(recordsToGenerate, dType):
-    dataList = []
-    for i in range(recordsToGenerate):
-        lines = open('./datasources/LastNameBR.txt').read().splitlines()
-        myline = random.choice(lines).capitalize()
-        myline = myline.split(",")[0]
-        myline = str(myline.split()[0])
-        dataList.append('\''+myline+'\'')
-    return dataList
-
-def FullName(recordsToGenerate, dType):
-    dataList = []
-    for i in range(recordsToGenerate):
-        lines = open('./datasources/FirstNameBR.txt').read().splitlines()
-        myline = random.choice(lines).capitalize()
-        myline = myline.split(",")[0]
-        lines = open('./datasources/LastNameBR.txt').read().splitlines()
-        myline = myline + ' ' + random.choice(lines).capitalize()
-        myline = myline.split(",")[0]
         dataList.append('\''+myline+'\'')
     return dataList
 
