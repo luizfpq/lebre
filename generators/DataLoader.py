@@ -26,12 +26,14 @@ def DataLoad(recordsToGenerate, dType, ValueDict):
     '''
         TextTypes
     '''
-    if dType == 'FirstName':
-        return  FirstName(recordsToGenerate, dType)
-    if dType == 'LastName':
-        return  LastName(recordsToGenerate, dType)
-    if dType == 'FullName':
-        return  FullName(recordsToGenerate, dType)
+    if 'FullName' in dType:
+        return FullName(recordsToGenerate, dType)
+    if 'FirstName' in dType:
+        return FirstName(recordsToGenerate, dType, ValueDict)
+    if 'LastName' in dType:
+        return LastName(recordsToGenerate, dType, ValueDict)
+    if 'Email' in dType:
+        return Email(recordsToGenerate, dType, ValueDict)
     ''' 
         USO: 
         Sempre que usar um campo inicial, ao criar o campo para os inserts, 
