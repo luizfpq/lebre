@@ -1,8 +1,0 @@
-[
-    {
-        "TableName": "professor",
-        "FieldList": "id_professor, cpf, nome, firstname, sobrenome, endereco, cidade, estado",
-        "DataType": "Serial,CPF,FullName,FirstName,LastName,Address:Num, City:MS, StateProvince:MS",
-        "RecordsToGenerate": 87
-    }
-]

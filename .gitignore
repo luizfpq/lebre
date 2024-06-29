@@ -500,3 +500,5 @@ FodyWeavers.xsd
 
 # Arquivos de teste para conversão em prováveis datasources posteriormente
 testes-datasources/
+results/*.sql
+tables/*.json
