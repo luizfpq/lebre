@@ -167,11 +167,15 @@ def Address(recordsToGenerate, dType):
     for i in range(recordsToGenerate):
         lines = open('./datasources/AddressTypeBR.txt').read().splitlines()
         myline = random.choice(lines)
-        myline = myline.split(",")[0].capitalize()
+        placeType = myline.split(",")[0].upper()
 
-        lines = open('./datasources/FirstNameBR.txt').read().splitlines()
-        myline = myline + ' ' + random.choice(lines).capitalize()
-        myline = myline.split(",")[0]
+        lines = open('./datasources/FullNameBR.txt').read().splitlines()
+
+        chosen_line = random.choice(lines).upper()
+        words = chosen_line.split()
+        num_words_to_select = random.randint(1, 2)
+        selected_words = random.sample(words, min(num_words_to_select, len(words)))
+        myline = placeType+' '+' '.join(selected_words)
         
         if ":" in dType:
             if 'Num' in dType:

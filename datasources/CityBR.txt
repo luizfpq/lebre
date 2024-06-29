@@ -122,10 +122,10 @@ Alagoas,AL,Munguba
 Alagoas,AL,Murici
 Alagoas,AL,Novo Lino
 Alagoas,AL,Olho D Água Grande
-Alagoas,AL,Olho D'Água Das Flores
-Alagoas,AL,Olho D'Água De Cima
-Alagoas,AL,Olho D'Água Do Casado
-Alagoas,AL,Olho D'Água Dos Dandanhas
+Alagoas,AL,Olho D\'Água Das Flores
+Alagoas,AL,Olho D\'Água De Cima
+Alagoas,AL,Olho D\'Água Do Casado
+Alagoas,AL,Olho D\'Água Dos Dandanhas
 Alagoas,AL,Olivença
 Alagoas,AL,Ouro Branco
 Alagoas,AL,Palestina
@@ -135,7 +135,7 @@ Alagoas,AL,Pão de Açúcar
 Alagoas,AL,Pariconha
 Alagoas,AL,Paripueira
 Alagoas,AL,Passo de Camaragibe
-Alagoas,AL,Pau D'arco
+Alagoas,AL,Pau D\'arco
 Alagoas,AL,Pau Ferro
 Alagoas,AL,Paulo Jacinto
 Alagoas,AL,Penedo
@@ -175,7 +175,7 @@ Alagoas,AL,Serra da Mandioca
 Alagoas,AL,Serra do São José
 Alagoas,AL,Taboleiro do Pinto
 Alagoas,AL,Taboquinha
-Alagoas,AL,Tanque D'arca
+Alagoas,AL,Tanque D\'arca
 Alagoas,AL,Taquarana
 Alagoas,AL,Tatuamunha
 Alagoas,AL,Teotônio Vilela
@@ -873,8 +873,8 @@ Bahia,BA,Novo Horizonte
 Bahia,BA,Novo Triunfo
 Bahia,BA,Núcleo Residencial Pilar
 Bahia,BA,Nuguacu
-Bahia,BA,Olhos D'Água Do Seco
-Bahia,BA,Olhos D'Água Do Serafim
+Bahia,BA,Olhos D\'Água Do Seco
+Bahia,BA,Olhos D\'Água Do Serafim
 Bahia,BA,Olindina
 Bahia,BA,Oliveira dos Brejinhos
 Bahia,BA,Olivença
@@ -1517,8 +1517,8 @@ Ceará,CE,Novo Assis
 Ceará,CE,Novo Oriente
 Ceará,CE,Ocara
 Ceará,CE,Oiticica
-Ceará,CE,Olho-d'agua
-Ceará,CE,Olho-d'agua da Bica
+Ceará,CE,Olho-d\'agua
+Ceará,CE,Olho-d\'agua da Bica
 Ceará,CE,Oliveiras
 Ceará,CE,Orós
 Ceará,CE,Pacajus
@@ -2204,7 +2204,7 @@ Goiás,GO,Novo Brasil
 Goiás,GO,Novo Gama
 Goiás,GO,Novo Planalto
 Goiás,GO,Olaria do Angico
-Goiás,GO,Olhos D'agua
+Goiás,GO,Olhos D\'agua
 Goiás,GO,Orizona
 Goiás,GO,Ouro Verde de Goiás
 Goiás,GO,Ouroana
@@ -2234,7 +2234,7 @@ Goiás,GO,Porangatu
 Goiás,GO,Porteirão
 Goiás,GO,Portelândia
 Goiás,GO,Posse
-Goiás,GO,Posse D'abadia
+Goiás,GO,Posse D\'abadia
 Goiás,GO,Professor Jamil
 Goiás,GO,Quirinopolis
 Goiás,GO,Registro do Araguaiá
@@ -2267,7 +2267,7 @@ Goiás,GO,São Domingos
 Goiás,GO,São Francisco de Goiás
 Goiás,GO,São Gabriel de Goiás
 Goiás,GO,São João
-Goiás,GO,São João D'alianca
+Goiás,GO,São João D\'alianca
 Goiás,GO,São João da Parauna
 Goiás,GO,São Luis de Montes Belos
 Goiás,GO,São Luiz do Norte
@@ -2284,7 +2284,7 @@ Goiás,GO,Serra Dourada
 Goiás,GO,Serranopolis
 Goiás,GO,Silvania
 Goiás,GO,Simolândia
-Goiás,GO,Sitio D'abadia
+Goiás,GO,Sitio D\'abadia
 Goiás,GO,Sousania
 Goiás,GO,Taquaral de Goiás
 Goiás,GO,Taveira
@@ -2463,7 +2463,7 @@ Maranhão,MA,Nina Rodrigues
 Maranhão,MA,Nova Colinas
 Maranhão,MA,Nova Iorque
 Maranhão,MA,Nova Olinda do Maranhão
-Maranhão,MA,Olho D'agua Das Cunhas
+Maranhão,MA,Olho D\'agua Das Cunhas
 Maranhão,MA,Olinda Nova do Maranhão
 Maranhão,MA,Paco do Lumiar
 Maranhão,MA,Palmeirândia
@@ -3287,7 +3287,7 @@ Minas Gerais,MG,Leopoldina
 Minas Gerais,MG,Levinopolis
 Minas Gerais,MG,Liberdade
 Minas Gerais,MG,Lima Duarte
-Minas Gerais,MG,Limeira D'oeste
+Minas Gerais,MG,Limeira D\'oeste
 Minas Gerais,MG,Limeira de Mantena
 Minas Gerais,MG,Lobo Leite
 Minas Gerais,MG,Lontra
@@ -3435,8 +3435,8 @@ Minas Gerais,MG,Novorizonte
 Minas Gerais,MG,Ocidente
 Minas Gerais,MG,Olaria
 Minas Gerais,MG,Olegario Maciel
-Minas Gerais,MG,Olhos D'agua Do Oeste
-Minas Gerais,MG,Olhos-d'agua
+Minas Gerais,MG,Olhos D\'agua Do Oeste
+Minas Gerais,MG,Olhos-d\'agua
 Minas Gerais,MG,Olimpio Campos
 Minas Gerais,MG,Olimpio Noronha
 Minas Gerais,MG,Oliveira
@@ -3543,7 +3543,7 @@ Minas Gerais,MG,Piedade dos Gerais
 Minas Gerais,MG,Pilar
 Minas Gerais,MG,Pimenta
 Minas Gerais,MG,Pindaibas
-Minas Gerais,MG,Pingo-d'agua
+Minas Gerais,MG,Pingo-d\'agua
 Minas Gerais,MG,Pinheirinhos
 Minas Gerais,MG,Pinheiros Altos
 Minas Gerais,MG,Pinhotiba
@@ -4298,7 +4298,7 @@ Mato Grosso,MT,Flor da Serra
 Mato Grosso,MT,Fontanilhas
 Mato Grosso,MT,Gaucha do Norte
 Mato Grosso,MT,General Carneiro
-Mato Grosso,MT,Gloria D'oeste
+Mato Grosso,MT,Gloria D\'oeste
 Mato Grosso,MT,Guaranta do Norte
 Mato Grosso,MT,Guarita
 Mato Grosso,MT,Guiratinga
@@ -4319,7 +4319,7 @@ Mato Grosso,MT,Juara
 Mato Grosso,MT,Juina
 Mato Grosso,MT,Juruena
 Mato Grosso,MT,Juscimeira
-Mato Grosso,MT,Lambari D'oeste
+Mato Grosso,MT,Lambari D\'oeste
 Mato Grosso,MT,Lavouras
 Mato Grosso,MT,Lucas do Rio Verde
 Mato Grosso,MT,Lucialva
@@ -4330,7 +4330,7 @@ Mato Grosso,MT,Marzagão
 Mato Grosso,MT,Mata Dentro
 Mato Grosso,MT,Matupa
 Mato Grosso,MT,Mimoso
-Mato Grosso,MT,Mirassol D'oeste
+Mato Grosso,MT,Mirassol D\'oeste
 Mato Grosso,MT,Nobres
 Mato Grosso,MT,Nonoai do Norte
 Mato Grosso,MT,Nortelândia
@@ -4661,7 +4661,7 @@ Pará,PA,Palestina do Para
 Pará,PA,Paragominas
 Pará,PA,Paratins
 Pará,PA,Parauapebas
-Pará,PA,Pau D'arco
+Pará,PA,Pau D\'arco
 Pará,PA,Pedreira
 Pará,PA,Peixe-boi
 Pará,PA,Penhalonga
@@ -4906,7 +4906,7 @@ Paraíba,PB,Lerolândia
 Paraíba,PB,Livramento
 Paraíba,PB,Logradouro
 Paraíba,PB,Lucena
-Paraíba,PB,Mae D'agua
+Paraíba,PB,Mae D\'agua
 Paraíba,PB,Maiá
 Paraíba,PB,Malta
 Paraíba,PB,Mamanguape
@@ -4939,7 +4939,7 @@ Paraíba,PB,Nova Palmeira
 Paraíba,PB,Nucleo N Null
 Paraíba,PB,Nucleo N Null
 Paraíba,PB,Odilândia
-Paraíba,PB,Olho D'agua
+Paraíba,PB,Olho D\'agua
 Paraíba,PB,Olivedos
 Paraíba,PB,Ouro Velho
 Paraíba,PB,Parari
@@ -5158,7 +5158,7 @@ Pernambuco,PE,Conceição das Crioulas
 Pernambuco,PE,Condado
 Pernambuco,PE,Correntes
 Pernambuco,PE,Cortes
-Pernambuco,PE,Couro D'antas
+Pernambuco,PE,Couro D\'antas
 Pernambuco,PE,Cristalia
 Pernambuco,PE,Cruanji
 Pernambuco,PE,Cruzes
@@ -5285,7 +5285,7 @@ Pernambuco,PE,Nossa Senhora da Luz
 Pernambuco,PE,Nossa Senhora do Carmo
 Pernambuco,PE,Nossa Senhora do O
 Pernambuco,PE,Nova Cruz
-Pernambuco,PE,Olho D'agua De Dentro
+Pernambuco,PE,Olho D\'agua De Dentro
 Pernambuco,PE,Olinda
 Pernambuco,PE,Oratorio
 Pernambuco,PE,Ori
@@ -5448,7 +5448,7 @@ Piauí,PI,Arraiál
 Piauí,PI,Assunção do Piaui
 Piauí,PI,Avelino Lopes
 Piauí,PI,Baixa Grande do Ribeiro
-Piauí,PI,Barra D'alcantara
+Piauí,PI,Barra D\'alcantara
 Piauí,PI,Barras
 Piauí,PI,Barreiras do Piaui
 Piauí,PI,Barro Duro
@@ -5573,7 +5573,7 @@ Piauí,PI,Novo Nilo
 Piauí,PI,Novo Oriente do Piaui
 Piauí,PI,Novo Santo Antonio
 Piauí,PI,Oeiras
-Piauí,PI,Olho D'agua Do Piaui
+Piauí,PI,Olho D\'agua Do Piaui
 Piauí,PI,Padre Marcos
 Piauí,PI,Paes Landim
 Piauí,PI,Pajeu do Piaui
@@ -5727,7 +5727,7 @@ Paraná,PR,Bairro do Felisberto
 Paraná,PR,Bairro Limoeiro
 Paraná,PR,Balsa Nova
 Paraná,PR,Bandeirantes
-Paraná,PR,Bandeirantes D'oeste
+Paraná,PR,Bandeirantes D\'oeste
 Paraná,PR,Banhado
 Paraná,PR,Barão de Lucena
 Paraná,PR,Barbosa Ferraz
@@ -5920,7 +5920,7 @@ Paraná,PR,Despique
 Paraná,PR,Despraiádo
 Paraná,PR,Dez de Maio
 Paraná,PR,Diamante
-Paraná,PR,Diamante D'oeste
+Paraná,PR,Diamante D\'oeste
 Paraná,PR,Diamante do Norte
 Paraná,PR,Diamante do Sul
 Paraná,PR,Doce Grande
@@ -5938,7 +5938,7 @@ Paraná,PR,Doutor Ulysses
 Paraná,PR,Eduardo Xavier da Silva
 Paraná,PR,Emboguacu
 Paraná,PR,Emboque
-Paraná,PR,Encantado D'oeste
+Paraná,PR,Encantado D\'oeste
 Paraná,PR,Encruzilhada
 Paraná,PR,Eneas Marques
 Paraná,PR,Engenheiro Beltrão
@@ -6076,7 +6076,7 @@ Paraná,PR,Itambaraca
 Paraná,PR,Itambe
 Paraná,PR,Itapanhacanga
 Paraná,PR,Itapara
-Paraná,PR,Itapejara D'oeste
+Paraná,PR,Itapejara D\'oeste
 Paraná,PR,Itaperucu
 Paraná,PR,Itaqui
 Paraná,PR,Itauna do Sul
@@ -6262,7 +6262,7 @@ Paraná,PR,Novo Sobradinho
 Paraná,PR,Novo Três Passos
 Paraná,PR,Olaria
 Paraná,PR,Olho Agudo
-Paraná,PR,Olho D'agua
+Paraná,PR,Olho D\'agua
 Paraná,PR,Oroite
 Paraná,PR,Ortigueira
 Paraná,PR,Ourilândia
@@ -6286,7 +6286,7 @@ Paraná,PR,Panema
 Paraná,PR,Pangare
 Paraná,PR,Papagaios Novos
 Paraná,PR,Paraiso do Norte
-Paraná,PR,Parana D'oeste
+Paraná,PR,Parana D\'oeste
 Paraná,PR,Paranacity
 Paraná,PR,Paranagi
 Paraná,PR,Paranagua
@@ -6300,7 +6300,7 @@ Paraná,PR,Passo Liso
 Paraná,PR,Pato Bragado
 Paraná,PR,Pato Branco
 Paraná,PR,Patos Velhos
-Paraná,PR,Pau D'alho Do Sul
+Paraná,PR,Pau D\'alho Do Sul
 Paraná,PR,Paula Freitas
 Paraná,PR,Paulistania
 Paraná,PR,Paulo Frontin
@@ -6378,7 +6378,7 @@ Paraná,PR,Quinzopolis
 Paraná,PR,Quitandinha
 Paraná,PR,Ramilândia
 Paraná,PR,Rancho Alegre
-Paraná,PR,Rancho Alegre D'oeste
+Paraná,PR,Rancho Alegre D\'oeste
 Paraná,PR,Realeza
 Paraná,PR,Reboucas
 Paraná,PR,Região dos Valos
@@ -6485,7 +6485,7 @@ Paraná,PR,São Gabriel
 Paraná,PR,São Gotardo
 Paraná,PR,São Jeronimo da Serra
 Paraná,PR,São João
-Paraná,PR,São João D'oeste
+Paraná,PR,São João D\'oeste
 Paraná,PR,São João da Boa Vista
 Paraná,PR,São João do Caiua
 Paraná,PR,São João do Ivai
@@ -6493,7 +6493,7 @@ Paraná,PR,São João do Pinhal
 Paraná,PR,São João do Triunfo
 Paraná,PR,São Joaquim
 Paraná,PR,São Joaquim do Pontal
-Paraná,PR,São Jorge D'oeste
+Paraná,PR,São Jorge D\'oeste
 Paraná,PR,São Jorge do Ivai
 Paraná,PR,São Jorge do Patrocinio
 Paraná,PR,São José
@@ -6538,7 +6538,7 @@ Paraná,PR,Sarandi
 Paraná,PR,Saudade do Iguacu
 Paraná,PR,Sede Alvorada
 Paraná,PR,Sede Chaparral
-Paraná,PR,Sede Nova Sant'ana
+Paraná,PR,Sede Nova Sant\'ana
 Paraná,PR,Sede Progresso
 Paraná,PR,Selva
 Paraná,PR,Senges
@@ -7014,7 +7014,7 @@ Rio Grande do Norte,RN,João Dias
 Rio Grande do Norte,RN,José da Penha
 Rio Grande do Norte,RN,Jucurutu
 Rio Grande do Norte,RN,Jundia de Cima
-Rio Grande do Norte,RN,Lagoa D'anta
+Rio Grande do Norte,RN,Lagoa D\'anta
 Rio Grande do Norte,RN,Lagoa de Pedras
 Rio Grande do Norte,RN,Lagoa de Velhos
 Rio Grande do Norte,RN,Lagoa Nova
@@ -7039,7 +7039,7 @@ Rio Grande do Norte,RN,Mossoro
 Rio Grande do Norte,RN,Natal
 Rio Grande do Norte,RN,Nisia Floresta
 Rio Grande do Norte,RN,Nova Cruz
-Rio Grande do Norte,RN,Olho-d'agua Do Borges
+Rio Grande do Norte,RN,Olho-d\'agua Do Borges
 Rio Grande do Norte,RN,Ouro Branco
 Rio Grande do Norte,RN,Parana
 Rio Grande do Norte,RN,Parazinho
@@ -7145,19 +7145,19 @@ Rondônia,RO,Colorado do Oeste
 Rondônia,RO,Corumbiara
 Rondônia,RO,Costa Marques
 Rondônia,RO,Cujubim
-Rondônia,RO,Espigao D'oeste
+Rondônia,RO,Espigao D\'oeste
 Rondônia,RO,Governador Jorge Teixeira
 Rondônia,RO,Guajara-mirim
 Rondônia,RO,Jaci Parana
 Rondônia,RO,Jamari
 Rondônia,RO,Jaru
 Rondônia,RO,Ji-parana
-Rondônia,RO,Machadinho D'oeste
+Rondônia,RO,Machadinho D\'oeste
 Rondônia,RO,Marco Rondon
 Rondônia,RO,Ministro Andreazza
 Rondônia,RO,Mirante da Serra
 Rondônia,RO,Monte Negro
-Rondônia,RO,Nova Brasilândia D'oeste
+Rondônia,RO,Nova Brasilândia D\'oeste
 Rondônia,RO,Nova Mamore
 Rondônia,RO,Nova União
 Rondônia,RO,Nova Vida
@@ -7175,7 +7175,7 @@ Rondônia,RO,Rio Crespo
 Rondônia,RO,Riozinho
 Rondônia,RO,Rolim de Moura
 Rondônia,RO,Santa Luzia do Oeste
-Rondônia,RO,São Felipe D'oeste
+Rondônia,RO,São Felipe D\'oeste
 Rondônia,RO,São Francisco do Guapore
 Rondônia,RO,São Miguel do Guapore
 Rondônia,RO,Seringueiras
@@ -8236,7 +8236,7 @@ Santa Catarina,SC,Guata
 Santa Catarina,SC,Guatambu
 Santa Catarina,SC,Hercilio Luz
 Santa Catarina,SC,Herciliopolis
-Santa Catarina,SC,Herval D'oeste
+Santa Catarina,SC,Herval D\'oeste
 Santa Catarina,SC,Ibiam
 Santa Catarina,SC,Ibicare
 Santa Catarina,SC,Ibicui
@@ -8400,7 +8400,7 @@ Santa Catarina,SC,Ribeirão da Ilha
 Santa Catarina,SC,Ribeirão Pequeno
 Santa Catarina,SC,Rio Antinha
 Santa Catarina,SC,Rio Bonito
-Santa Catarina,SC,Rio D'una
+Santa Catarina,SC,Rio D\'una
 Santa Catarina,SC,Rio da Anta
 Santa Catarina,SC,Rio da Luz
 Santa Catarina,SC,Rio das Antas
@@ -8463,7 +8463,7 @@ Santa Catarina,SC,São Leonardo
 Santa Catarina,SC,São Lourenço do Oeste
 Santa Catarina,SC,São Ludgero
 Santa Catarina,SC,São Martinho
-Santa Catarina,SC,São Miguel D'oeste
+Santa Catarina,SC,São Miguel D\'oeste
 Santa Catarina,SC,São Miguel da Boa Vista
 Santa Catarina,SC,São Miguel da Serra
 Santa Catarina,SC,São Pedro de Alcantara
@@ -8553,7 +8553,7 @@ Sergipe,SE,Indiaroba
 Sergipe,SE,Itabaiána
 Sergipe,SE,Itabaiáninha
 Sergipe,SE,Itabi
-Sergipe,SE,Itaporanga D'ajuda
+Sergipe,SE,Itaporanga D\'ajuda
 Sergipe,SE,Japaratuba
 Sergipe,SE,Japoata
 Sergipe,SE,Lagarto
@@ -8650,7 +8650,7 @@ São Paulo,SP,Angatuba
 São Paulo,SP,Anhembi
 São Paulo,SP,Anhumas
 São Paulo,SP,Aparecida
-São Paulo,SP,Aparecida D'oeste
+São Paulo,SP,Aparecida D\'oeste
 São Paulo,SP,Aparecida de Monte Alto
 São Paulo,SP,Aparecida de São Manuel
 São Paulo,SP,Aparecida do Bonito
@@ -8696,7 +8696,7 @@ São Paulo,SP,Bairro Alto
 São Paulo,SP,Balbinos
 São Paulo,SP,Balsamo
 São Paulo,SP,Bananal
-São Paulo,SP,Bandeirantes D'oeste
+São Paulo,SP,Bandeirantes D\'oeste
 São Paulo,SP,Barão Ataliba Nogueira
 São Paulo,SP,Barão de Antonina
 São Paulo,SP,Barão de Geraldo
@@ -8874,12 +8874,12 @@ São Paulo,SP,Engenheiro Coelho
 São Paulo,SP,Engenheiro Maiá
 São Paulo,SP,Engenheiro Schmidt
 São Paulo,SP,Esmeralda
-São Paulo,SP,Esperanca D'oeste
+São Paulo,SP,Esperanca D\'oeste
 São Paulo,SP,Espigão
 São Paulo,SP,Espirito Santo do Pinhal
 São Paulo,SP,Espirito Santo do Turvo
 São Paulo,SP,Estiva Gerbi
-São Paulo,SP,Estrela D'oeste
+São Paulo,SP,Estrela D\'oeste
 São Paulo,SP,Estrela do Norte
 São Paulo,SP,Euclides da Cunha Paulista
 São Paulo,SP,Eugenio de Melo
@@ -8922,8 +8922,8 @@ São Paulo,SP,Guapiranga
 São Paulo,SP,Guara
 São Paulo,SP,Guaracai
 São Paulo,SP,Guaraci
-São Paulo,SP,Guaraciaba D'oeste
-São Paulo,SP,Guarani D'oeste
+São Paulo,SP,Guaraciaba D\'oeste
+São Paulo,SP,Guarani D\'oeste
 São Paulo,SP,Guaranta
 São Paulo,SP,Guarapiranga
 São Paulo,SP,Guarapua
@@ -9195,7 +9195,7 @@ São Paulo,SP,Pacaembu
 São Paulo,SP,Padre Nobrega
 São Paulo,SP,Palestina
 São Paulo,SP,Palmares Paulista
-São Paulo,SP,Palmeira D'oeste
+São Paulo,SP,Palmeira D\'oeste
 São Paulo,SP,Palmeiras de São Paulo
 São Paulo,SP,Palmital
 São Paulo,SP,Panorama
@@ -9346,9 +9346,9 @@ São Paulo,SP,Sandovalina
 São Paulo,SP,Santa Adelia
 São Paulo,SP,Santa Albertina
 São Paulo,SP,Santa America
-São Paulo,SP,Santa Barbara D'oeste
+São Paulo,SP,Santa Barbara D\'oeste
 São Paulo,SP,Santa Branca
-São Paulo,SP,Santa Clara D'oeste
+São Paulo,SP,Santa Clara D\'oeste
 São Paulo,SP,Santa Cruz da Conceição
 São Paulo,SP,Santa Cruz da Esperanca
 São Paulo,SP,Santa Cruz da Estrela
@@ -9366,7 +9366,7 @@ São Paulo,SP,Santa Margarida Paulista
 São Paulo,SP,Santa Maria da Serra
 São Paulo,SP,Santa Maria do Gurupa
 São Paulo,SP,Santa Mercedes
-São Paulo,SP,Santa Rita D'oeste
+São Paulo,SP,Santa Rita D\'oeste
 São Paulo,SP,Santa Rita do Passa Quatro
 São Paulo,SP,Santa Rita do Ribeira
 São Paulo,SP,Santa Rosa de Viterbo
@@ -9403,7 +9403,7 @@ São Paulo,SP,São João das Duas Pontes
 São Paulo,SP,São João de Iracema
 São Paulo,SP,São João de Itaguacu
 São Paulo,SP,São João do Marinheiro
-São Paulo,SP,São João Do Pau D'alho
+São Paulo,SP,São João Do Pau D\'alho
 São Paulo,SP,São João Novo
 São Paulo,SP,São Joaquim da Barra
 São Paulo,SP,São José da Bela Vista
@@ -9417,7 +9417,7 @@ São Paulo,SP,São Lourenço do Turvo
 São Paulo,SP,São Luis do Paraitinga
 São Paulo,SP,São Luiz do Guaricanga
 São Paulo,SP,São Manuel
-São Paulo,SP,São Martinho D'oeste
+São Paulo,SP,São Martinho D\'oeste
 São Paulo,SP,São Miguel Arcanjo
 São Paulo,SP,São Paulo
 São Paulo,SP,São Pedro
@@ -9482,7 +9482,7 @@ São Paulo,SP,Tecainda
 São Paulo,SP,Tejupa
 São Paulo,SP,Teodoro Sampaio
 São Paulo,SP,Termas de Ibira
-São Paulo,SP,Terra Nova D'oeste
+São Paulo,SP,Terra Nova D\'oeste
 São Paulo,SP,Terra Roxa
 São Paulo,SP,Tibirica
 São Paulo,SP,Tibirica do Paranapanema
@@ -9655,7 +9655,7 @@ Tocantins,TO,Palmeirante
 Tocantins,TO,Palmeiropolis
 Tocantins,TO,Paraiso do Tocantins
 Tocantins,TO,Parana
-Tocantins,TO,Pau D'arco
+Tocantins,TO,Pau D\'arco
 Tocantins,TO,Pe da Serra
 Tocantins,TO,Pedro Afonso
 Tocantins,TO,Pedro Ludovico
