@@ -75,7 +75,7 @@ def salvar_tabela(tabela):
     # Verifica o próximo número disponível para nomear a tabela
     numero = obter_proximo_numero()
     numero_formatado = f"{numero:02d}"  # Formata para dois dígitos
-    nome_arquivo = f"tables/{numero_formatado}_tbl_{tabela['TableName']}.json"
+    nome_arquivo = f"tables/{numero_formatado}_{tabela['TableName']}.json"
 
     with open(nome_arquivo, 'w') as json_file:
         json.dump([tabela], json_file, indent=4)
