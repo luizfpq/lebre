@@ -1,27 +1,27 @@
-Acre,AC
-Alagoas,AL
-Amapá,AP
-Amazonas,AM
-Bahia,BA
-Ceará,CE
-Distrito Federal,DF
-Espírito Santo,ES
-Goiás,GO
-Maranhão,MA
-Mato Grosso,MT
-Mato Grosso do Sul,MS
-Minas Gerais,MG
-Pará,PA
-Paraíba,PB
-Paraná,PR
-Pernambuco,PE
-Piauí,PI
-Rio de Janeiro,RJ
-Rio Grande do Norte,RN
-Rio Grande do Sul,RS
-Rondônia,RO
-Roraima,RR
-Santa Catarina,SC
-São Paulo,SP
-Sergipe,SE
-Tocantins,TO
+ACRE,AC
+ALAGOAS,AL
+AMAPÁ,AP
+AMAZONAS,AM
+BAHIA,BA
+CEARÁ,CE
+DISTRITO FEDERAL,DF
+ESPÍRITO SANTO,ES
+GOIÁS,GO
+MARANHÃO,MA
+MATO GROSSO,MT
+MATO GROSSO DO SUL,MS
+MINAS GERAIS,MG
+PARÁ,PA
+PARAÍBA,PB
+PARANÁ,PR
+PERNAMBUCO,PE
+PIAUÍ,PI
+RIO DE JANEIRO,RJ
+RIO GRANDE DO NORTE,RN
+RIO GRANDE DO SUL,RS
+RONDÔNIA,RO
+RORAIMA,RR
+SANTA CATARINA,SC
+SÃO PAULO,SP
+SERGIPE,SE
+TOCANTINS,TO
