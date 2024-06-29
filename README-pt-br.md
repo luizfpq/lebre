@@ -9,16 +9,16 @@ Lebres são animais que geralmente representam fertilidade, eles estão relacion
 
 Se estiver no Linux:
 
-    ./run.py
+    ./main.py
 
 Se for usuário do Windows:
 
-    python run.py
+    python main.py
 
 Se você for um Mac User:
 
     #Pague um cafezinho, 'cê' tem grana;
-    python run.py
+    python main.py
 
 Dentro da pasta "table", crie os arquivos json e nomeie-os com uma sequência numérica para que sejam criados na ordem de interdenpendencia, de acordo com a seguinte sugestão:
 ex:
@@ -76,4 +76,4 @@ Tipos de dados é um conjunto de dados que colocaremos nos campos da tabela, nos
 
 
 ## Dependências
-        Python 3.7
+        Python 3.7+

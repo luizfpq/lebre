@@ -497,3 +497,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Arquivos de teste para conversão em prováveis datasources posteriormente
+testes-datasources/
