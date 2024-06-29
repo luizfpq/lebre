@@ -149,7 +149,7 @@ def InitName(recordsToGenerate, dType, ValueDict):
     for i in range(recordsToGenerate):
         # recebemos o primeiro caracter do ultimo nome usado na lista
         myline = str(ValueDict[-1][i][1])
-        myline = myline.split(",")[0].capitalize()
+        myline = myline.split(",")[0]
         dataList.append('\''+myline+'\'')
     return dataList
 
@@ -157,7 +157,7 @@ def Sex(recordsToGenerate, dType):
     dataList = []
     for i in range(recordsToGenerate):
         lines = open('./datasources/Sex.txt').read().splitlines()
-        myline = random.choice(lines).capitalize()
+        myline = random.choice(lines)
         dataList.append('\''+myline+'\'')
     return dataList
 
@@ -167,11 +167,11 @@ def Address(recordsToGenerate, dType):
     for i in range(recordsToGenerate):
         lines = open('./datasources/AddressTypeBR.txt').read().splitlines()
         myline = random.choice(lines)
-        placeType = myline.split(",")[0].upper()
+        placeType = myline.split(",")[0]
 
         lines = open('./datasources/FullNameBR.txt').read().splitlines()
 
-        chosen_line = random.choice(lines).upper()
+        chosen_line = random.choice(lines)
         words = chosen_line.split()
         num_words_to_select = random.randint(1, 2)
         selected_words = random.sample(words, min(num_words_to_select, len(words)))
@@ -246,5 +246,5 @@ def Varchar(recordsToGenerate, dType):
 
     dataList = []
     for i in range(recordsToGenerate):
-        dataList.append(random_char(int(dType.split(":")[1])).upper())
+        dataList.append(random_char(int(dType.split(":")[1])))
     return dataList

@@ -1,6 +1,0 @@
-[{
-    "TableName": "tbl_pessoa",
-    "FieldList": "id_pessoa, cpf, nome, inicial, sobrenome, endereco, cidade, estado",
-    "DataType": "Serial,CPF,FullName, UserName, LastName,Address:Num, City:SP, StateProvince:SP",
-    "RecordsToGenerate": 8
-}]

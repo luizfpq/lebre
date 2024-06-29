@@ -14,4 +14,4 @@
   
 # v2.0.1
 - Adiciona normalizer.py para permitir a normalização dos arquivos datasources, até o momento permitindo apenas uppercase e lowercase;
-- remove funções de normalização de dentro dos generators para melhorar o processamento;
+- remove funções de normalização de dentro dos generators para melhorar o processamento, mantidos apenas lower do email e usernames;
