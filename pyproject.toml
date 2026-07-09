@@ -28,6 +28,9 @@ Homepage = "https://github.com/luizfpq/lebre"
 Repository = "https://github.com/luizfpq/lebre"
 Issues = "https://github.com/luizfpq/lebre/issues"
 
+[project.optional-dependencies]
+yaml = ["pyyaml>=6.0"]
+
 [project.scripts]
 lebre = "cli:main"
 
