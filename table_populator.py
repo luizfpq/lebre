@@ -46,11 +46,18 @@ def main():
 
                 DataList = list(table_dict[0]['DataType'].split(","))
 
-                # Gera FullName primeiro
-                for i, item in enumerate(DataList):
-                    if 'FullName' in item:
-                        FullNameValues = DataLoad(recordsToGenerate, item.strip(), ValueDict)
-                        break
+                # Gera FullName primeiro (necessário para FirstName, LastName, UserName, Email)
+                has_fullname_field = any('FullName' in item for item in DataList)
+                needs_fullname = any(k in item for item in DataList for k in ['FirstName', 'LastName', 'UserName', 'Email'])
+
+                if has_fullname_field or needs_fullname:
+                    for i, item in enumerate(DataList):
+                        if 'FullName' in item:
+                            FullNameValues = DataLoad(recordsToGenerate, item.strip(), ValueDict)
+                            break
+                    else:
+                        # Não há campo FullName explícito, mas precisa gerar para derivar nomes
+                        FullNameValues = DataLoad(recordsToGenerate, 'FullName', ValueDict)
 
                 # Gera os outros campos
                 for item in DataList:
