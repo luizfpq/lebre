@@ -156,6 +156,7 @@ AVAILABLE_TYPES = [
     "Address[:Num]", "City[:UF]", "StateProvince[:Find|UF]",
     "Date[:dd/mm/yyyy:dd/mm/yyyy]", "DateTime",
     "UUID", "Boolean[:int|bit]",
+    "ForeignKey:table:field",
     "Default:value",
 ]
 
@@ -264,9 +265,14 @@ def cmd_populate(args: argparse.Namespace) -> None:
         print(f"Arquivo gerado: '{output_file}'.")
 
 
-def _generate_values(table_dict: list[dict]) -> tuple[list[list], int, int]:
+def _generate_values(table_dict: list[dict],
+                     context: dict | None = None) -> tuple[list[list], int, int]:
     """
     Gera value_dict para uma definição de tabela.
+
+    Args:
+        table_dict: Definição da tabela.
+        context: Dict com dados inter-tabela {table_name: {field_name: [values]}}.
 
     Returns:
         (value_dict, records, field_count)
@@ -288,19 +294,19 @@ def _generate_values(table_dict: list[dict]) -> tuple[list[list], int, int]:
     if has_fullname_field or needs_fullname:
         for item in data_list:
             if 'FullName' in item:
-                fullname_values = DataLoad(records, item, value_dict)
+                fullname_values = DataLoad(records, item, value_dict, context=context)
                 break
         else:
-            fullname_values = DataLoad(records, 'FullName', value_dict)
+            fullname_values = DataLoad(records, 'FullName', value_dict, context=context)
 
     # Gera os outros campos
     for item in data_list:
         if 'FullName' in item:
             continue  # será inserido na posição correta depois
         if any(dep in item for dep in dependent_types):
-            values = DataLoad(records, item, [fullname_values])
+            values = DataLoad(records, item, [fullname_values], context=context)
         else:
-            values = DataLoad(records, item, value_dict)
+            values = DataLoad(records, item, value_dict, context=context)
         value_dict.append(values)
 
     # Insere FullName na posição correta se estava no DataType
@@ -321,17 +327,28 @@ def _quote_identifier(name: str, dialect: str) -> str:
     return name  # sqlite
 
 
+def _register_context(context: dict, table_name: str, fields: list[str],
+                      value_dict: list[list], field_count: int) -> None:
+    """Registra valores gerados no contexto inter-tabela para ForeignKey."""
+    context[table_name] = {}
+    for col in range(field_count):
+        context[table_name][fields[col]] = value_dict[col]
+
+
 def _populate_sql(table_files: list[str], output_file: str | None, dialect: str = 'postgresql') -> None:
     """Gera saída no formato SQL INSERT."""
+    context: dict = {}
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
     try:
         for tf in table_files:
             table_dict = _load_table_file(tf)
             table_name = get_table_name(table_dict)
-            value_dict, records, field_count = _generate_values(table_dict)
+            value_dict, records, field_count = _generate_values(table_dict, context=context)
+
+            fields = [f.strip() for f in table_dict[0]['FieldList'].split(',')]
+            _register_context(context, table_name, fields, value_dict, field_count)
 
             quoted_table = _quote_identifier(table_name, dialect)
-            fields = [f.strip() for f in table_dict[0]['FieldList'].split(',')]
             quoted_fields = ', '.join(_quote_identifier(f, dialect) for f in fields)
 
             fh.write(f'INSERT INTO\n\t{quoted_table} ({quoted_fields})\nVALUES\n')
@@ -347,12 +364,15 @@ def _populate_sql(table_files: list[str], output_file: str | None, dialect: str 
 
 def _populate_csv(table_files: list[str], output_file: str | None) -> None:
     """Gera saída no formato CSV."""
+    context: dict = {}
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
     try:
         for tf in table_files:
             table_dict = _load_table_file(tf)
             fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
-            value_dict, records, field_count = _generate_values(table_dict)
+            value_dict, records, field_count = _generate_values(table_dict, context=context)
+
+            _register_context(context, get_table_name(table_dict), fields, value_dict, field_count)
 
             fh.write(','.join(fields) + '\n')
 
@@ -372,13 +392,16 @@ def _populate_csv(table_files: list[str], output_file: str | None) -> None:
 
 def _populate_json(table_files: list[str], output_file: str | None) -> None:
     """Gera saída no formato JSON (array de objetos por tabela)."""
+    context: dict = {}
     output: dict[str, list[dict]] = {}
 
     for tf in table_files:
         table_dict = _load_table_file(tf)
         table_name = get_table_name(table_dict)
         fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
-        value_dict, records, field_count = _generate_values(table_dict)
+        value_dict, records, field_count = _generate_values(table_dict, context=context)
+
+        _register_context(context, table_name, fields, value_dict, field_count)
 
         rows = []
         for i in range(records):

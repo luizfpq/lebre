@@ -12,7 +12,7 @@ from random import randint
 __all__ = [
     "FullName", "FirstName", "LastName", "UserName", "Email", "InitName",
     "Sex", "CPF", "CNPJ", "Phone", "CEP", "UUID", "Boolean",
-    "Varchar", "Address", "City", "StateProvince",
+    "Varchar", "Address", "City", "StateProvince", "ForeignKey",
 ]
 
 
@@ -545,3 +545,70 @@ def Boolean(records_to_generate: int, data_type: str) -> list:
         return [random.choice((1, 0)) for _ in range(records_to_generate)]
     else:
         return [random.choice(('TRUE', 'FALSE')) for _ in range(records_to_generate)]
+
+
+
+# ---------------------------------------------------------------------------
+# Foreign Key
+# ---------------------------------------------------------------------------
+
+def ForeignKey(records_to_generate: int, data_type: str, context: dict) -> list:
+    """
+    Gera valores referenciando uma coluna de outra tabela já processada.
+
+    Uso:
+        ForeignKey:tbl_nome:campo
+
+    O campo referenciado deve existir em uma tabela já gerada na mesma
+    sessão de populate. Valores são selecionados aleatoriamente do pool
+    de valores gerados para aquele campo.
+
+    Args:
+        records_to_generate: Número de registros a gerar.
+        data_type: Formato 'ForeignKey:tabela:campo'.
+        context: Dict com dados gerados {table_name: {field_name: [values]}}.
+
+    Raises:
+        GeneratorError: Se a tabela/campo referenciado não existir no contexto.
+    """
+    _validate_records(records_to_generate)
+
+    parts = data_type.split(":")
+    if len(parts) != 3:
+        raise GeneratorError(
+            f"Formato inválido para ForeignKey: '{data_type}'. "
+            "Esperado: ForeignKey:tabela:campo (ex: ForeignKey:tbl_departamentos:id)"
+        )
+
+    ref_table = parts[1].strip()
+    ref_field = parts[2].strip()
+
+    if not context:
+        raise GeneratorError(
+            f"ForeignKey: tabela '{ref_table}' não encontrada. "
+            "Nenhuma tabela foi processada ainda. "
+            "Verifique a ordem dos arquivos de tabela (a tabela referenciada deve vir primeiro)."
+        )
+
+    if ref_table not in context:
+        available = ', '.join(sorted(context.keys()))
+        raise GeneratorError(
+            f"ForeignKey: tabela '{ref_table}' não encontrada no contexto. "
+            f"Tabelas disponíveis: {available}. "
+            "A tabela referenciada deve ser processada antes da que a referencia."
+        )
+
+    if ref_field not in context[ref_table]:
+        available_fields = ', '.join(sorted(context[ref_table].keys()))
+        raise GeneratorError(
+            f"ForeignKey: campo '{ref_field}' não encontrado na tabela '{ref_table}'. "
+            f"Campos disponíveis: {available_fields}"
+        )
+
+    pool = context[ref_table][ref_field]
+    if not pool:
+        raise GeneratorError(
+            f"ForeignKey: campo '{ref_field}' da tabela '{ref_table}' não tem valores gerados."
+        )
+
+    return [random.choice(pool) for _ in range(records_to_generate)]

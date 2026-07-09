@@ -8,7 +8,7 @@ from __future__ import annotations
 from generators.TextTypes import (
     FullName, FirstName, LastName, UserName, Email, InitName,
     Sex, CPF, CNPJ, Phone, CEP, UUID, Boolean,
-    Varchar, Address, City, StateProvince,
+    Varchar, Address, City, StateProvince, ForeignKey,
     GeneratorError,
 )
 from generators.DateTime import Date, DateTime
@@ -75,11 +75,13 @@ _DISPATCH_ORDER: list[tuple[str, callable, bool]] = [
     ('Sex', Sex, False),
     ('Address', Address, False),
     ('City', City, True),
+    ('ForeignKey', None, False),  # tratado separadamente
     ('Default', None, False),
 ]
 
 
-def DataLoad(records_to_generate: int, data_type: str, value_dict: list) -> list:
+def DataLoad(records_to_generate: int, data_type: str, value_dict: list,
+             context: dict | None = None) -> list:
     """
     Dispatcher principal — roteia para o gerador correto conforme data_type.
 
@@ -87,6 +89,7 @@ def DataLoad(records_to_generate: int, data_type: str, value_dict: list) -> list
         records_to_generate: Número de registros a gerar.
         data_type: Tipo de dado (ex: 'Serial', 'CPF', 'FullName', 'Integer:0:100').
         value_dict: Lista de campos já gerados (para tipos dependentes).
+        context: Dict com dados inter-tabela (para ForeignKey).
 
     Returns:
         Lista com os valores gerados.
@@ -103,6 +106,10 @@ def DataLoad(records_to_generate: int, data_type: str, value_dict: list) -> list
 
     for prefix, generator_fn, needs_value_dict in _DISPATCH_ORDER:
         if prefix in data_type:
+            # Caso especial: ForeignKey precisa de context inter-tabela
+            if prefix == 'ForeignKey':
+                return ForeignKey(records_to_generate, data_type, context or {})
+
             # Caso especial: Default retorna valor fixo
             if prefix == 'Default':
                 parts = data_type.split(":", 1)
