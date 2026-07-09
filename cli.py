@@ -19,6 +19,13 @@ import json
 import os
 import sys
 import glob
+import tomllib
+
+try:
+    import yaml
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
 
 from generators.DataLoader import DataLoad
 from generators.Getters import get_table_name, get_count_records_to_generate, get_count_field_list
@@ -44,6 +51,49 @@ def get_next_number(directory, extension):
     return max(numbers) + 1 if numbers else 0
 
 
+def _load_table_file(filepath):
+    """Carrega definição de tabela de JSON, YAML ou TOML. Retorna lista de dicts."""
+    ext = os.path.splitext(filepath)[1].lower()
+
+    if ext == '.json':
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    elif ext in ('.yaml', '.yml'):
+        if not HAS_YAML:
+            print("Erro: pacote 'pyyaml' não instalado. Instale com: pip install pyyaml",
+                  file=sys.stderr)
+            sys.exit(1)
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+    elif ext == '.toml':
+        with open(filepath, 'rb') as f:
+            data = tomllib.load(f)
+        # TOML retorna dict; normalizar para lista
+        if isinstance(data, dict) and 'TableName' in data:
+            data = [data]
+        elif isinstance(data, dict) and 'table' in data:
+            # suporte a [table] como seção
+            data = [data['table']]
+    else:
+        print(f"Formato não suportado: '{ext}'. Use .json, .yaml ou .toml.", file=sys.stderr)
+        sys.exit(1)
+
+    # Normalizar: se veio dict solto, envelopar em lista
+    if isinstance(data, dict):
+        data = [data]
+
+    return data
+
+
+def _find_table_files(tables_dir):
+    """Busca todos os arquivos de tabela suportados no diretório, ordenados."""
+    patterns = ['*.json', '*.yaml', '*.yml', '*.toml']
+    files = []
+    for pat in patterns:
+        files.extend(glob.glob(os.path.join(tables_dir, pat)))
+    return sorted(set(files))
+
+
 AVAILABLE_TYPES = [
     "Serial[:start]", "Integer:min:max",
     "FullName", "FirstName", "LastName", "UserName[:Num]", "Email", "InitName",
@@ -61,8 +111,9 @@ AVAILABLE_TYPES = [
 # ---------------------------------------------------------------------------
 
 def cmd_create_table(args):
-    """Cria um arquivo JSON de definição de tabela."""
+    """Cria um arquivo de definição de tabela (JSON, YAML ou TOML)."""
     tables_dir = args.tables_dir
+    table_format = args.table_format
 
     table = {
         "TableName": args.name,
@@ -71,11 +122,26 @@ def cmd_create_table(args):
         "RecordsToGenerate": args.records,
     }
 
-    num = get_next_number(tables_dir, 'json')
-    filename = os.path.join(tables_dir, f"{num:02d}_{args.name}.json")
+    num = get_next_number(tables_dir, table_format)
+    filename = os.path.join(tables_dir, f"{num:02d}_{args.name}.{table_format}")
 
-    with open(filename, 'w', encoding='utf-8') as f:
-        json.dump([table], f, indent=4, ensure_ascii=False)
+    if table_format == 'json':
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump([table], f, indent=4, ensure_ascii=False)
+    elif table_format in ('yaml', 'yml'):
+        if not HAS_YAML:
+            print("Erro: pacote 'pyyaml' não instalado. Instale com: pip install pyyaml",
+                  file=sys.stderr)
+            sys.exit(1)
+        with open(filename, 'w', encoding='utf-8') as f:
+            yaml.dump(table, f, default_flow_style=False, allow_unicode=True)
+    elif table_format == 'toml':
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write('[table]\n')
+            f.write(f'TableName = "{table["TableName"]}"\n')
+            f.write(f'FieldList = "{table["FieldList"]}"\n')
+            f.write(f'DataType = "{table["DataType"]}"\n')
+            f.write(f'RecordsToGenerate = {table["RecordsToGenerate"]}\n')
 
     print(f"Tabela salva em '{filename}'.")
 
@@ -91,7 +157,7 @@ def cmd_populate(args):
     output_format = args.format
     use_stdout = args.stdout
 
-    table_files = sorted(glob.glob(os.path.join(tables_dir, '*.json')))
+    table_files = _find_table_files(tables_dir)
     if not table_files:
         print(f"Nenhuma tabela encontrada em '{tables_dir}/'.", file=sys.stderr)
         sys.exit(1)
@@ -170,8 +236,7 @@ def _populate_sql(table_files, output_file, dialect='postgresql'):
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
     try:
         for tf in table_files:
-            with open(tf, 'r', encoding='utf-8') as f:
-                table_dict = json.load(f)
+            table_dict = _load_table_file(tf)
 
             table_name = get_table_name(table_dict)
             ValueDict, records, field_count = _generate_values(table_dict)
@@ -197,8 +262,7 @@ def _populate_csv(table_files, output_file):
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
     try:
         for tf in table_files:
-            with open(tf, 'r', encoding='utf-8') as f:
-                table_dict = json.load(f)
+            table_dict = _load_table_file(tf)
 
             fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
             ValueDict, records, field_count = _generate_values(table_dict)
@@ -228,8 +292,7 @@ def _populate_json(table_files, output_file):
     output = {}
 
     for tf in table_files:
-        with open(tf, 'r', encoding='utf-8') as f:
-            table_dict = json.load(f)
+        table_dict = _load_table_file(tf)
 
         table_name = get_table_name(table_dict)
         fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
@@ -287,12 +350,14 @@ def build_parser():
     subparsers = parser.add_subparsers(dest='command', help='Comandos disponíveis')
 
     # create-table
-    ct = subparsers.add_parser('create-table', help='Cria definição de tabela (JSON)')
+    ct = subparsers.add_parser('create-table', help='Cria definição de tabela (JSON, YAML ou TOML)')
     ct.add_argument('--name', required=True, help='Nome da tabela')
     ct.add_argument('--fields', required=True, help='Campos separados por vírgula')
     ct.add_argument('--types', required=True, help='Tipos de dados separados por vírgula (use list-types para ver)')
     ct.add_argument('--records', type=int, required=True, help='Número de registros a gerar')
     ct.add_argument('--tables-dir', default='tables', help='Diretório para salvar (default: tables)')
+    ct.add_argument('--table-format', choices=['json', 'yaml', 'toml'], default='json',
+                     help='Formato do arquivo de tabela (default: json)')
     ct.set_defaults(func=cmd_create_table)
 
     # populate
