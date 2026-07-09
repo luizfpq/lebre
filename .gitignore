@@ -500,5 +500,7 @@ FodyWeavers.xsd
 
 # Arquivos de teste para conversão em prováveis datasources posteriormente
 testes-datasources/
-results/*.sql
-tables/*.json
+
+# Lebre — diretórios de trabalho (gerados em runtime)
+tables/
+results/

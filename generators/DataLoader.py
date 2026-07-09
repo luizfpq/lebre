@@ -95,9 +95,10 @@ def DataLoad(recordsToGenerate, dType, ValueDict):
     '''
         DateTimeTypes
     '''
-    # TODO permit date interval selection
-    if dType == 'Date':
-        return random_date("1/1/1970", "1/1/2000", random.random(recordsToGenerate, dType))
+    if 'Date' in dType and 'DateTime' not in dType:
+        return Date(recordsToGenerate, dType)
+    if 'DateTime' in dType:
+        return DateTime(recordsToGenerate, dType)
     '''
         Set a Default data, wich returns itself, to set default values on fields
         Example1
@@ -112,3 +113,17 @@ def DataLoad(recordsToGenerate, dType, ValueDict):
         for i in range(recordsToGenerate):
             dataList.append(dType.split(":")[1])
         return dataList
+
+    '''
+        Novos tipos v2.1
+    '''
+    if 'Phone' in dType:
+        return Phone(recordsToGenerate, dType)
+    if 'CNPJ' in dType:
+        return CNPJ(recordsToGenerate, dType)
+    if 'CEP' in dType:
+        return CEP(recordsToGenerate, dType)
+    if 'UUID' in dType:
+        return UUID(recordsToGenerate, dType)
+    if 'Boolean' in dType:
+        return Boolean(recordsToGenerate, dType)

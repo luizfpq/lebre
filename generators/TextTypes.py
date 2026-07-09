@@ -22,29 +22,32 @@ __status__ = "Dev"
 import random
 from random import randint
 import string
+import os
+
+# ---------------------------------------------------------------------------
+# Cache de datasources — carrega cada arquivo apenas uma vez em memória
+# ---------------------------------------------------------------------------
+_datasource_cache = {}
+
+def _get_datasource(filename):
+    """Retorna as linhas do datasource em cache. Carrega do disco apenas na primeira chamada."""
+    if filename not in _datasource_cache:
+        filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                'datasources', filename)
+        with open(filepath, 'r', encoding='utf-8') as f:
+            _datasource_cache[filename] = f.read().splitlines()
+    return _datasource_cache[filename]
+
+
+def _search_in_datasource(filename, search_term):
+    """Filtra linhas do datasource que contêm search_term."""
+    lines = _get_datasource(filename)
+    return [line for line in lines if search_term in line]
+
 
 def random_char(y):
     randChar = ''.join(random.choice(string.ascii_letters) for x in range(y))
     return '\''+randChar+'\''
-
-def search_string_in_file(file_name, string_to_search):
-    """
-       Busca a string no arquivo e retorna uma lista filtrada apenas com a presença desta string
-    """
-    line_number = 0
-    list_of_results = []
-    
-    # Open the file in read only mode
-    with open(file_name, 'r') as read_obj:
-        # Read all lines in the file one by one
-        for line in read_obj:
-            # For each line, check if line contains the string
-            line_number += 1
-            if str(string_to_search) in str(line):
-            # If yes, then add the line number & line as a tuple in the list
-                list_of_results.append(line)                
-    # Return list of tuples containing line numbers and lines where string is found
-    return list_of_results
 
 
 def CPF(recordsToGenerate, dType):
@@ -74,7 +77,7 @@ def FullName(recordsToGenerate, dType):
     Gera uma lista de nomes completos a partir do arquivo FullNameBR.txt.
     """
     dataList = []
-    lines = open('./datasources/FullNameBR.txt').read().splitlines()
+    lines = _get_datasource('FullNameBR.txt')
     for i in range(recordsToGenerate):
         myline = random.choice(lines).strip()
         dataList.append(f"'{myline}'")
@@ -155,23 +158,22 @@ def InitName(recordsToGenerate, dType, ValueDict):
 
 def Sex(recordsToGenerate, dType):
     dataList = []
+    lines = _get_datasource('Sex.txt')
     for i in range(recordsToGenerate):
-        lines = open('./datasources/Sex.txt').read().splitlines()
         myline = random.choice(lines)
         dataList.append('\''+myline+'\'')
     return dataList
 
 def Address(recordsToGenerate, dType):
     dataList = []
-    # atribui o valor inicial do serial(autoincremento)
+    address_lines = _get_datasource('AddressTypeBR.txt')
+    name_lines = _get_datasource('FullNameBR.txt')
+
     for i in range(recordsToGenerate):
-        lines = open('./datasources/AddressTypeBR.txt').read().splitlines()
-        myline = random.choice(lines)
+        myline = random.choice(address_lines)
         placeType = myline.split(",")[0]
 
-        lines = open('./datasources/FullNameBR.txt').read().splitlines()
-
-        chosen_line = random.choice(lines)
+        chosen_line = random.choice(name_lines)
         words = chosen_line.split()
         num_words_to_select = random.randint(1, 2)
         selected_words = random.sample(words, min(num_words_to_select, len(words)))
@@ -195,14 +197,16 @@ def City(recordsToGenerate, dType, ValueDict):
                 City
     '''
     dataList = []
+    if ":" in dType:
+        lines = _search_in_datasource('CityBR.txt', str(dType.split(":")[1]))
+    else:
+        lines = _get_datasource('CityBR.txt')
+
     for i in range(recordsToGenerate):
+        myline = random.choice(lines)
         if ":" in dType:
-           lines = search_string_in_file('./datasources/CityBR.txt',  str(dType.split(":")[1] ))
-           myline = random.choice(lines)
-           myline = myline.split(",")[2].replace("\n", "")
+            myline = myline.split(",")[2].replace("\n", "")
         else:
-            lines = open('./datasources/CityBR.txt').read().splitlines()
-            myline = random.choice(lines)
             myline = myline.split(",")[2]
         dataList.append('\''+myline+'\'')
     return dataList
@@ -224,21 +228,26 @@ def StateProvince(recordsToGenerate, dType, ValueDict):
             
     '''
     dataList = []
+
+    # Pré-carrega linhas para modos que não dependem de ValueDict por registro
+    if ":" in dType and 'Find' not in dType:
+        lines = _search_in_datasource('CityBR.txt', str(dType.split(":")[1]))
+    elif ":" not in dType:
+        lines = _get_datasource('StateProvinceBR.txt')
+    else:
+        lines = None  # modo Find — depende de cada registro
+
     for i in range(recordsToGenerate):
         if ":" in dType:
-            if 'Find' in dType:  
-                lines = search_string_in_file('./datasources/CityBR.txt',  str(ValueDict[-1][i].replace("'", '') ))
-                myline = str(lines[0])
+            if 'Find' in dType:
+                matched = _search_in_datasource('CityBR.txt', str(ValueDict[-1][i].replace("'", '')))
+                myline = str(matched[0])
                 myline = myline.split(",")[0].replace("\n", "")
             else:
-                lines = search_string_in_file('./datasources/CityBR.txt',  str(dType.split(":")[1] ))
                 myline = random.choice(lines)
                 myline = myline.split(",")[0].replace("\n", "")
-                
         else:
-            lines = open('./datasources/StateProvinceBR.txt').read().splitlines()
             myline = random.choice(lines)
-            #myline = myline.split(",")[0]
         dataList.append(str('\''+myline+'\''))
     return dataList
 
@@ -247,4 +256,130 @@ def Varchar(recordsToGenerate, dType):
     dataList = []
     for i in range(recordsToGenerate):
         dataList.append(random_char(int(dType.split(":")[1])))
+    return dataList
+
+
+
+# ---------------------------------------------------------------------------
+# Novos geradores v2.1
+# ---------------------------------------------------------------------------
+
+import uuid as _uuid
+
+
+def Phone(recordsToGenerate, dType):
+    """
+    Gera números de telefone brasileiros.
+    USO:
+        Phone         -> celular com DDD aleatório, formato (XX) 9XXXX-XXXX
+        Phone:fixo    -> fixo com DDD aleatório, formato (XX) XXXX-XXXX
+        Phone:XX      -> celular com DDD específico (ex: Phone:11)
+    """
+    dataList = []
+    for _ in range(recordsToGenerate):
+        if ":" in dType:
+            param = dType.split(":")[1]
+            if param == 'fixo':
+                ddd = str(randint(11, 99))
+                number = f"({ddd}) {randint(2000,5999)}-{randint(1000,9999)}"
+            else:
+                ddd = param
+                number = f"({ddd}) 9{randint(1000,9999)}-{randint(1000,9999)}"
+        else:
+            ddd = str(randint(11, 99))
+            number = f"({ddd}) 9{randint(1000,9999)}-{randint(1000,9999)}"
+        dataList.append(f"'{number}'")
+    return dataList
+
+
+def CNPJ(recordsToGenerate, dType):
+    """
+    Gera CNPJs válidos (com dígitos verificadores corretos).
+    Formato: XX.XXX.XXX/0001-XX
+    """
+    dataList = []
+    for _ in range(recordsToGenerate):
+        base = [random.randint(0, 9) for _ in range(8)] + [0, 0, 0, 1]
+
+        # Primeiro dígito verificador
+        weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+        val = sum(b * w for b, w in zip(base, weights1)) % 11
+        base.append(0 if val < 2 else 11 - val)
+
+        # Segundo dígito verificador
+        weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+        val = sum(b * w for b, w in zip(base, weights2)) % 11
+        base.append(0 if val < 2 else 11 - val)
+
+        cnpj = '%s%s.%s%s%s.%s%s%s/%s%s%s%s-%s%s' % tuple(base)
+        dataList.append(f"'{cnpj}'")
+    return dataList
+
+
+def CEP(recordsToGenerate, dType):
+    """
+    Gera CEPs aleatórios no formato XXXXX-XXX.
+    USO:
+        CEP       -> CEP totalmente aleatório
+        CEP:SP    -> CEP com faixa de São Paulo (01000-19999)
+    """
+    # Faixas aproximadas por UF (primeiro dígito)
+    uf_ranges = {
+        'SP': (1000, 19999), 'RJ': (20000, 28999), 'ES': (29000, 29999),
+        'MG': (30000, 39999), 'BA': (40000, 48999), 'SE': (49000, 49999),
+        'PE': (50000, 56999), 'AL': (57000, 57999), 'PB': (58000, 58999),
+        'RN': (59000, 59999), 'CE': (60000, 63999), 'PI': (64000, 64999),
+        'MA': (65000, 65999), 'PA': (66000, 68899), 'AP': (68900, 68999),
+        'AM': (69000, 69299), 'RR': (69300, 69399), 'AC': (69900, 69999),
+        'DF': (70000, 72799), 'GO': (72800, 76799), 'TO': (77000, 77999),
+        'MT': (78000, 78899), 'MS': (79000, 79999), 'PR': (80000, 87999),
+        'SC': (88000, 89999), 'RS': (90000, 99999),
+    }
+
+    dataList = []
+    for _ in range(recordsToGenerate):
+        if ":" in dType:
+            uf = dType.split(":")[1].upper()
+            if uf in uf_ranges:
+                prefix = randint(*uf_ranges[uf])
+            else:
+                prefix = randint(1000, 99999)
+        else:
+            prefix = randint(1000, 99999)
+
+        suffix = randint(0, 999)
+        cep = f"{prefix:05d}-{suffix:03d}"
+        dataList.append(f"'{cep}'")
+    return dataList
+
+
+def UUID(recordsToGenerate, dType):
+    """
+    Gera UUIDs v4 aleatórios.
+    """
+    dataList = []
+    for _ in range(recordsToGenerate):
+        dataList.append(f"'{_uuid.uuid4()}'")
+    return dataList
+
+
+def Boolean(recordsToGenerate, dType):
+    """
+    Gera valores booleanos aleatórios.
+    USO:
+        Boolean          -> TRUE/FALSE
+        Boolean:int      -> 1/0
+        Boolean:bit      -> 1/0 (alias de int)
+    """
+    dataList = []
+    for _ in range(recordsToGenerate):
+        val = random.choice([True, False])
+        if ":" in dType:
+            param = dType.split(":")[1].lower()
+            if param in ('int', 'bit'):
+                dataList.append(1 if val else 0)
+            else:
+                dataList.append('TRUE' if val else 'FALSE')
+        else:
+            dataList.append('TRUE' if val else 'FALSE')
     return dataList
