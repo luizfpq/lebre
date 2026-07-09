@@ -50,12 +50,12 @@ def random_char(y):
     return '\''+randChar+'\''
 
 
-def CPF(recordsToGenerate, dType):
+def CPF(records_to_generate, data_type):
     '''
     Gera o cadastro de pessoas físicas, com um valor validável
     '''
-    dataList = []
-    for i in range(recordsToGenerate):
+    data_list = []
+    for i in range(records_to_generate):
         cpf = [random.randint(0, 9) for x in range(9)]                              
                                                                                     
         for _ in range(2):                                                          
@@ -63,131 +63,131 @@ def CPF(recordsToGenerate, dType):
                                                                                     
             cpf.append(11 - val if val > 1 else 0)                                  
 
-        dataList.append('%s%s%s.%s%s%s.%s%s%s-%s%s' % tuple(cpf))
-    return dataList
+        data_list.append('%s%s%s.%s%s%s.%s%s%s-%s%s' % tuple(cpf))
+    return data_list
 
-#def InitName(recordsToGenerate, dType, ValueDict):
-#    dataList = []
-#    for i in range(recordsToGenerate):
+#def InitName(records_to_generate, data_type, value_dict):
+#    data_list = []
+#    for i in range(records_to_generate):
 #        
-#    return dataList
+#    return data_list
 
-def FullName(recordsToGenerate, dType):
+def FullName(records_to_generate, data_type):
     """
     Gera uma lista de nomes completos a partir do arquivo FullNameBR.txt.
     """
-    dataList = []
+    data_list = []
     lines = _get_datasource('FullNameBR.txt')
-    for i in range(recordsToGenerate):
-        myline = random.choice(lines).strip()
-        dataList.append(f"'{myline}'")
-    return dataList
+    for i in range(records_to_generate):
+        line = random.choice(lines).strip()
+        data_list.append(f"'{line}'")
+    return data_list
 
-def FirstName(recordsToGenerate, dType, ValueDict):
+def FirstName(records_to_generate, data_type, value_dict):
     """
     Gera uma lista de primeiros nomes a partir da lista de nomes completos.
     """
-    dataList = []
-    for i in range(recordsToGenerate):
-        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+    data_list = []
+    for i in range(records_to_generate):
+        fullname = value_dict[0][i]  # Assume que FullName é o primeiro no value_dict
         if not fullname:
             continue  # Ignore se fullname for None ou vazio
 
         firstname = fullname.split()[0].strip("'")
-        dataList.append(f"'{firstname}'")
-    return dataList
+        data_list.append(f"'{firstname}'")
+    return data_list
 
 
-def LastName(recordsToGenerate, dType, ValueDict):
+def LastName(records_to_generate, data_type, value_dict):
     """
     Gera uma lista de sobrenomes a partir da lista de nomes completos.
     """
-    dataList = []
-    for i in range(recordsToGenerate):
-        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+    data_list = []
+    for i in range(records_to_generate):
+        fullname = value_dict[0][i]  # Assume que FullName é o primeiro no value_dict
         if not fullname:
             continue  # Ignore se fullname for None ou vazio
 
         lastname = fullname.split()[-1].strip("'")
-        dataList.append(f"'{lastname}'")
-    return dataList
+        data_list.append(f"'{lastname}'")
+    return data_list
 
 
-def UserName(recordsToGenerate, dType, ValueDict):
+def UserName(records_to_generate, data_type, value_dict):
     """
     Gera uma lista de nomes de usuário a partir da lista de nomes completos.
     """
-    dataList = []
-    for i in range(recordsToGenerate):
-        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+    data_list = []
+    for i in range(records_to_generate):
+        fullname = value_dict[0][i]  # Assume que FullName é o primeiro no value_dict
         if not fullname:
             continue  # Ignore se fullname for None ou vazio
 
         fullname = fullname.strip("'")  # Remove aspas externas
         parts = fullname.split()
         username = (parts[0][0] + parts[-1]).lower()  # Primeiro caractere do primeiro nome + sobrenome
-        if ":" in dType:
-            if 'Num' in dType:
+        if ":" in data_type:
+            if 'Num' in data_type:
                 number = str(randint(0, 999999)).rjust(6, "0")
                 username = username + number
-        dataList.append(f"'{username}'")
-    return dataList
+        data_list.append(f"'{username}'")
+    return data_list
 
 
-def Email(recordsToGenerate, dType, ValueDict):
+def Email(records_to_generate, data_type, value_dict):
     """
     Gera uma lista de emails a partir da lista de nomes completos.
     """
-    dataList = []
-    for i in range(recordsToGenerate):
-        fullname = ValueDict[0][i]  # Assume que FullName é o primeiro no ValueDict
+    data_list = []
+    for i in range(records_to_generate):
+        fullname = value_dict[0][i]  # Assume que FullName é o primeiro no value_dict
         parts = fullname.strip("'").split()
         email = (parts[0] + '.' + parts[-1]).lower() + "@example.com"  # Primeiro nome + ponto + sobrenome + @example.com
-        dataList.append(f"'{email}'")
-    return dataList
+        data_list.append(f"'{email}'")
+    return data_list
 
 # TODO migrar listas para dicionarios
-def InitName(recordsToGenerate, dType, ValueDict):
-    dataList = []
-    for i in range(recordsToGenerate):
+def InitName(records_to_generate, data_type, value_dict):
+    data_list = []
+    for i in range(records_to_generate):
         # recebemos o primeiro caracter do ultimo nome usado na lista
-        myline = str(ValueDict[-1][i][1])
-        myline = myline.split(",")[0]
-        dataList.append('\''+myline+'\'')
-    return dataList
+        line = str(value_dict[-1][i][1])
+        line = line.split(",")[0]
+        data_list.append('\''+line+'\'')
+    return data_list
 
-def Sex(recordsToGenerate, dType):
-    dataList = []
+def Sex(records_to_generate, data_type):
+    data_list = []
     lines = _get_datasource('Sex.txt')
-    for i in range(recordsToGenerate):
-        myline = random.choice(lines)
-        dataList.append('\''+myline+'\'')
-    return dataList
+    for i in range(records_to_generate):
+        line = random.choice(lines)
+        data_list.append('\''+line+'\'')
+    return data_list
 
-def Address(recordsToGenerate, dType):
-    dataList = []
+def Address(records_to_generate, data_type):
+    data_list = []
     address_lines = _get_datasource('AddressTypeBR.txt')
     name_lines = _get_datasource('FullNameBR.txt')
 
-    for i in range(recordsToGenerate):
-        myline = random.choice(address_lines)
-        placeType = myline.split(",")[0]
+    for i in range(records_to_generate):
+        line = random.choice(address_lines)
+        place_type = line.split(",")[0]
 
         chosen_line = random.choice(name_lines)
         words = chosen_line.split()
         num_words_to_select = random.randint(1, 2)
         selected_words = random.sample(words, min(num_words_to_select, len(words)))
-        myline = placeType+' '+' '.join(selected_words)
+        line = place_type+' '+' '.join(selected_words)
         
-        if ":" in dType:
-            if 'Num' in dType:
+        if ":" in data_type:
+            if 'Num' in data_type:
                 number = str(randint(0, 999))
-                myline = myline + ', ' + number
+                line = line + ', ' + number
                 
-        dataList.append('\''+myline+'\'')
-    return dataList
+        data_list.append('\''+line+'\'')
+    return data_list
 
-def City(recordsToGenerate, dType, ValueDict):
+def City(records_to_generate, data_type, value_dict):
     ''' 
         USO: 
             caso queira definir uma cidade de estado específico
@@ -196,22 +196,22 @@ def City(recordsToGenerate, dType, ValueDict):
             caso queira apenas uma cidade aleatória
                 City
     '''
-    dataList = []
-    if ":" in dType:
-        lines = _search_in_datasource('CityBR.txt', str(dType.split(":")[1]))
+    data_list = []
+    if ":" in data_type:
+        lines = _search_in_datasource('CityBR.txt', str(data_type.split(":")[1]))
     else:
         lines = _get_datasource('CityBR.txt')
 
-    for i in range(recordsToGenerate):
-        myline = random.choice(lines)
-        if ":" in dType:
-            myline = myline.split(",")[2].replace("\n", "")
+    for i in range(records_to_generate):
+        line = random.choice(lines)
+        if ":" in data_type:
+            line = line.split(",")[2].replace("\n", "")
         else:
-            myline = myline.split(",")[2]
-        dataList.append('\''+myline+'\'')
-    return dataList
+            line = line.split(",")[2]
+        data_list.append('\''+line+'\'')
+    return data_list
 
-def StateProvince(recordsToGenerate, dType, ValueDict):
+def StateProvince(records_to_generate, data_type, value_dict):
     ''' 
         USO: 
             Caso queira apenas um estado aleatório
@@ -223,40 +223,40 @@ def StateProvince(recordsToGenerate, dType, ValueDict):
                 StateProvince:Find
             
             IMPORTANTE
-            NUNCA USE O FIND COM recordsToGenerate > 50
+            NUNCA USE O FIND COM records_to_generate > 50
             isso causa um estouro nos indices das listas usadas
             
     '''
-    dataList = []
+    data_list = []
 
-    # Pré-carrega linhas para modos que não dependem de ValueDict por registro
-    if ":" in dType and 'Find' not in dType:
-        lines = _search_in_datasource('CityBR.txt', str(dType.split(":")[1]))
-    elif ":" not in dType:
+    # Pré-carrega linhas para modos que não dependem de value_dict por registro
+    if ":" in data_type and 'Find' not in data_type:
+        lines = _search_in_datasource('CityBR.txt', str(data_type.split(":")[1]))
+    elif ":" not in data_type:
         lines = _get_datasource('StateProvinceBR.txt')
     else:
         lines = None  # modo Find — depende de cada registro
 
-    for i in range(recordsToGenerate):
-        if ":" in dType:
-            if 'Find' in dType:
-                matched = _search_in_datasource('CityBR.txt', str(ValueDict[-1][i].replace("'", '')))
-                myline = str(matched[0])
-                myline = myline.split(",")[0].replace("\n", "")
+    for i in range(records_to_generate):
+        if ":" in data_type:
+            if 'Find' in data_type:
+                matched = _search_in_datasource('CityBR.txt', str(value_dict[-1][i].replace("'", '')))
+                line = str(matched[0])
+                line = line.split(",")[0].replace("\n", "")
             else:
-                myline = random.choice(lines)
-                myline = myline.split(",")[0].replace("\n", "")
+                line = random.choice(lines)
+                line = line.split(",")[0].replace("\n", "")
         else:
-            myline = random.choice(lines)
-        dataList.append(str('\''+myline+'\''))
-    return dataList
+            line = random.choice(lines)
+        data_list.append(str('\''+line+'\''))
+    return data_list
 
-def Varchar(recordsToGenerate, dType):
+def Varchar(records_to_generate, data_type):
 
-    dataList = []
-    for i in range(recordsToGenerate):
-        dataList.append(random_char(int(dType.split(":")[1])))
-    return dataList
+    data_list = []
+    for i in range(records_to_generate):
+        data_list.append(random_char(int(data_type.split(":")[1])))
+    return data_list
 
 
 
@@ -267,7 +267,7 @@ def Varchar(recordsToGenerate, dType):
 import uuid as _uuid
 
 
-def Phone(recordsToGenerate, dType):
+def Phone(records_to_generate, data_type):
     """
     Gera números de telefone brasileiros.
     USO:
@@ -275,10 +275,10 @@ def Phone(recordsToGenerate, dType):
         Phone:fixo    -> fixo com DDD aleatório, formato (XX) XXXX-XXXX
         Phone:XX      -> celular com DDD específico (ex: Phone:11)
     """
-    dataList = []
-    for _ in range(recordsToGenerate):
-        if ":" in dType:
-            param = dType.split(":")[1]
+    data_list = []
+    for _ in range(records_to_generate):
+        if ":" in data_type:
+            param = data_type.split(":")[1]
             if param == 'fixo':
                 ddd = str(randint(11, 99))
                 number = f"({ddd}) {randint(2000,5999)}-{randint(1000,9999)}"
@@ -288,17 +288,17 @@ def Phone(recordsToGenerate, dType):
         else:
             ddd = str(randint(11, 99))
             number = f"({ddd}) 9{randint(1000,9999)}-{randint(1000,9999)}"
-        dataList.append(f"'{number}'")
-    return dataList
+        data_list.append(f"'{number}'")
+    return data_list
 
 
-def CNPJ(recordsToGenerate, dType):
+def CNPJ(records_to_generate, data_type):
     """
     Gera CNPJs válidos (com dígitos verificadores corretos).
     Formato: XX.XXX.XXX/0001-XX
     """
-    dataList = []
-    for _ in range(recordsToGenerate):
+    data_list = []
+    for _ in range(records_to_generate):
         base = [random.randint(0, 9) for _ in range(8)] + [0, 0, 0, 1]
 
         # Primeiro dígito verificador
@@ -312,11 +312,11 @@ def CNPJ(recordsToGenerate, dType):
         base.append(0 if val < 2 else 11 - val)
 
         cnpj = '%s%s.%s%s%s.%s%s%s/%s%s%s%s-%s%s' % tuple(base)
-        dataList.append(f"'{cnpj}'")
-    return dataList
+        data_list.append(f"'{cnpj}'")
+    return data_list
 
 
-def CEP(recordsToGenerate, dType):
+def CEP(records_to_generate, data_type):
     """
     Gera CEPs aleatórios no formato XXXXX-XXX.
     USO:
@@ -336,10 +336,10 @@ def CEP(recordsToGenerate, dType):
         'SC': (88000, 89999), 'RS': (90000, 99999),
     }
 
-    dataList = []
-    for _ in range(recordsToGenerate):
-        if ":" in dType:
-            uf = dType.split(":")[1].upper()
+    data_list = []
+    for _ in range(records_to_generate):
+        if ":" in data_type:
+            uf = data_type.split(":")[1].upper()
             if uf in uf_ranges:
                 prefix = randint(*uf_ranges[uf])
             else:
@@ -349,21 +349,21 @@ def CEP(recordsToGenerate, dType):
 
         suffix = randint(0, 999)
         cep = f"{prefix:05d}-{suffix:03d}"
-        dataList.append(f"'{cep}'")
-    return dataList
+        data_list.append(f"'{cep}'")
+    return data_list
 
 
-def UUID(recordsToGenerate, dType):
+def UUID(records_to_generate, data_type):
     """
     Gera UUIDs v4 aleatórios.
     """
-    dataList = []
-    for _ in range(recordsToGenerate):
-        dataList.append(f"'{_uuid.uuid4()}'")
-    return dataList
+    data_list = []
+    for _ in range(records_to_generate):
+        data_list.append(f"'{_uuid.uuid4()}'")
+    return data_list
 
 
-def Boolean(recordsToGenerate, dType):
+def Boolean(records_to_generate, data_type):
     """
     Gera valores booleanos aleatórios.
     USO:
@@ -371,15 +371,15 @@ def Boolean(recordsToGenerate, dType):
         Boolean:int      -> 1/0
         Boolean:bit      -> 1/0 (alias de int)
     """
-    dataList = []
-    for _ in range(recordsToGenerate):
+    data_list = []
+    for _ in range(records_to_generate):
         val = random.choice([True, False])
-        if ":" in dType:
-            param = dType.split(":")[1].lower()
+        if ":" in data_type:
+            param = data_type.split(":")[1].lower()
             if param in ('int', 'bit'):
-                dataList.append(1 if val else 0)
+                data_list.append(1 if val else 0)
             else:
-                dataList.append('TRUE' if val else 'FALSE')
+                data_list.append('TRUE' if val else 'FALSE')
         else:
-            dataList.append('TRUE' if val else 'FALSE')
-    return dataList
+            data_list.append('TRUE' if val else 'FALSE')
+    return data_list

@@ -35,36 +35,36 @@ def str_time_prop(start, end, fmt, prop):
 
 
 def random_date_time(start, end, prop):
-    randDateTime = str_time_prop(start, end, '%d/%m/%Y %I:%M %p', prop)
-    return '\''+randDateTime+'\''
+    rand_datetime = str_time_prop(start, end, '%d/%m/%Y %I:%M %p', prop)
+    return '\''+rand_datetime+'\''
 
 def random_date(start, end, prop):
-    randDate = str_time_prop(start, end, '%d/%m/%Y', prop)
-    return '\''+randDate+'\''
+    rand_date = str_time_prop(start, end, '%d/%m/%Y', prop)
+    return '\''+rand_date+'\''
 
 
-def Date(recordsToGenerate, dType):
+def Date(records_to_generate, data_type):
     """
     Gera uma lista de datas aleatórias.
     USO:
         Date                        -> data entre 01/01/1970 e 01/01/2000
         Date:01/01/1990:31/12/2020  -> data no intervalo especificado
     """
-    if ":" in dType:
-        parts = dType.split(":")
+    if ":" in data_type:
+        parts = data_type.split(":")
         start = parts[1]
         end = parts[2]
     else:
         start = "1/1/1970"
         end = "1/1/2000"
 
-    dataList = []
-    for _ in range(recordsToGenerate):
-        dataList.append(random_date(start, end, random.random()))
-    return dataList
+    data_list = []
+    for _ in range(records_to_generate):
+        data_list.append(random_date(start, end, random.random()))
+    return data_list
 
 
-def DateTime(recordsToGenerate, dType):
+def DateTime(records_to_generate, data_type):
     """
     Gera uma lista de datas com hora aleatórias.
     USO:
@@ -74,7 +74,7 @@ def DateTime(recordsToGenerate, dType):
     start = "1/1/1970 12:00 AM"
     end = "1/1/2000 11:59 PM"
 
-    dataList = []
-    for _ in range(recordsToGenerate):
-        dataList.append(random_date_time(start, end, random.random()))
-    return dataList
+    data_list = []
+    for _ in range(records_to_generate):
+        data_list.append(random_date_time(start, end, random.random()))
+    return data_list
