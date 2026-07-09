@@ -183,42 +183,42 @@ def cmd_populate(args):
 
 
 def _generate_values(table_dict):
-    """Gera ValueDict para uma definição de tabela (lógica extraída do table_populator)."""
+    """Gera value_dict para uma definição de tabela (lógica extraída do table_populator)."""
     records = get_count_records_to_generate(table_dict)
     field_count = get_count_field_list(table_dict)
-    DataList = [item.strip() for item in table_dict[0]['DataType'].split(",")]
+    data_list = [item.strip() for item in table_dict[0]['DataType'].split(",")]
 
-    ValueDict = []
-    FullNameValues = []
+    value_dict = []
+    fullname_values = []
 
     # Gera FullName primeiro (necessário para FirstName, LastName, UserName, Email)
-    has_fullname_field = any('FullName' in item for item in DataList)
-    needs_fullname = any(k in item for item in DataList for k in ['FirstName', 'LastName', 'UserName', 'Email'])
+    has_fullname_field = any('FullName' in item for item in data_list)
+    needs_fullname = any(k in item for item in data_list for k in ['FirstName', 'LastName', 'UserName', 'Email'])
 
     if has_fullname_field or needs_fullname:
-        for item in DataList:
+        for item in data_list:
             if 'FullName' in item:
-                FullNameValues = DataLoad(records, item.strip(), ValueDict)
+                fullname_values = DataLoad(records, item.strip(), value_dict)
                 break
         else:
-            FullNameValues = DataLoad(records, 'FullName', ValueDict)
+            fullname_values = DataLoad(records, 'FullName', value_dict)
 
     # Gera os outros campos
-    for item in DataList:
+    for item in data_list:
         if 'FullName' not in item:
             if any(k in item for k in ['FirstName', 'LastName', 'UserName', 'Email']):
-                values = DataLoad(records, item.strip(), [FullNameValues])
+                values = DataLoad(records, item.strip(), [fullname_values])
             else:
-                values = DataLoad(records, item.strip(), ValueDict)
-            ValueDict.append(values)
+                values = DataLoad(records, item.strip(), value_dict)
+            value_dict.append(values)
 
     # Insere FullName na posição correta se estava no DataType
-    for i, item in enumerate(DataList):
+    for i, item in enumerate(data_list):
         if 'FullName' in item:
-            ValueDict.insert(i, [f"{name}" for name in FullNameValues])
+            value_dict.insert(i, [f"{name}" for name in fullname_values])
             break
 
-    return ValueDict, records, field_count
+    return value_dict, records, field_count
 
 
 def _quote_identifier(name, dialect):
@@ -239,7 +239,7 @@ def _populate_sql(table_files, output_file, dialect='postgresql'):
             table_dict = _load_table_file(tf)
 
             table_name = get_table_name(table_dict)
-            ValueDict, records, field_count = _generate_values(table_dict)
+            value_dict, records, field_count = _generate_values(table_dict)
 
             # Quoting do nome da tabela e campos
             quoted_table = _quote_identifier(table_name, dialect)
@@ -249,7 +249,7 @@ def _populate_sql(table_files, output_file, dialect='postgresql'):
             fh.write(f'INSERT INTO\n\t{quoted_table} ({quoted_fields})\nVALUES\n')
 
             for i in range(records):
-                values = ', '.join(str(ValueDict[col][i]) for col in range(field_count))
+                values = ', '.join(str(value_dict[col][i]) for col in range(field_count))
                 separator = ';' if i == records - 1 else ','
                 fh.write(f"\t({values}){separator}\n")
     finally:
@@ -265,7 +265,7 @@ def _populate_csv(table_files, output_file):
             table_dict = _load_table_file(tf)
 
             fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
-            ValueDict, records, field_count = _generate_values(table_dict)
+            value_dict, records, field_count = _generate_values(table_dict)
 
             # Header
             fh.write(','.join(fields) + '\n')
@@ -274,7 +274,7 @@ def _populate_csv(table_files, output_file):
             for i in range(records):
                 row = []
                 for col in range(field_count):
-                    val = str(ValueDict[col][i])
+                    val = str(value_dict[col][i])
                     # Remove aspas SQL simples para CSV
                     if val.startswith("'") and val.endswith("'"):
                         val = val[1:-1]
@@ -296,13 +296,13 @@ def _populate_json(table_files, output_file):
 
         table_name = get_table_name(table_dict)
         fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
-        ValueDict, records, field_count = _generate_values(table_dict)
+        value_dict, records, field_count = _generate_values(table_dict)
 
         rows = []
         for i in range(records):
             row = {}
             for col in range(field_count):
-                val = ValueDict[col][i]
+                val = value_dict[col][i]
                 # Remove aspas SQL simples para JSON
                 if isinstance(val, str) and val.startswith("'") and val.endswith("'"):
                     val = val[1:-1]

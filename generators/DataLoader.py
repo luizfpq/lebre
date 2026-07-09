@@ -7,123 +7,75 @@ __author__ = "Luiz F. P. Quirino"
 __copyright__ = "Copyleft 2020, Planet Earth"
 __credits__ = ["LuizQuirino"]
 __license__ = "GPL v3"
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 __maintainer__ = "LuizQuirino"
 __email__ = "luizfpq@gmail.com"
 __status__ = "Dev"
 
 
 import random
-''' TextTypes reponses for all nom numeric data'''
+
 from generators.TextTypes import *
-''' DateTime responses for all DateTime based data'''
 from generators.DateTime import *
-''' NumericTypes responses for all generic numeric data '''
 from generators.NumericTypes import *
 
-def DataLoad(recordsToGenerate, dType, ValueDict):
 
-    '''
-        TextTypes
-    '''
-    if 'FullName' in dType:
-        return FullName(recordsToGenerate, dType)
-    if 'FirstName' in dType:
-        return FirstName(recordsToGenerate, dType, ValueDict)
-    if 'LastName' in dType:
-        return LastName(recordsToGenerate, dType, ValueDict)
-    if 'Email' in dType:
-        return Email(recordsToGenerate, dType, ValueDict)
-    ''' 
-        USO: 
-        Sempre que usar um campo inicial, ao criar o campo para os inserts, 
-        sempre colocar o campo da inicial logo a seguir do campo nome, 
-        pode-se usar a seguir de um FirstName, LastName, FullName, ou qualquer 
-        string que se queira obter a inicial
-    '''
-    if dType == 'InitName':
-        return  InitName(recordsToGenerate, dType, ValueDict)
-    ''' 
-        USO: 
-        Caso queira uma uma concatenação dos 3 primeiros e 3 ultimos carateres da string
-        Sempre que usar um campo inicial, ao criar o campo para os inserts, 
-        sempre colocar o campo da inicial logo a seguir do campo nome, 
-        pode-se usar a seguir de um FirstName, LastName, FullName, ou qualquer 
-        string que se queira obter a inicial
-    '''
-    if dType == 'UserName':
-        return UserName(recordsToGenerate, dType, ValueDict)
-    '''
-        USO:
-        Caso queira alterar o tipo de dado retornado, alterar o dicionario de sexos em 
-        datasources/Sex.txt
-    '''
-    if dType == 'Sex':
-        return  Sex(recordsToGenerate, dType)
-    if dType == 'CPF':
-        return CPF(recordsToGenerate, dType)
-    '''
-        USO: 
-            Varchar:size
-    '''
-    if "Varchar" in dType:
-        return Varchar(recordsToGenerate, dType)
-    ''' 
-        USO: 
-            caso queira definir um numero aleatório ao endereço
-                Address:Num
-            caso queira apenas um logradouro aleatório
-                Address
-    '''
-    if "Address" in dType:
-        return Address(recordsToGenerate, dType)
-    if "City" in dType:
-        return City(recordsToGenerate, dType, ValueDict)   
-    if "StateProvince" in dType:
-        return StateProvince(recordsToGenerate, dType, ValueDict)
+def DataLoad(records_to_generate, data_type, value_dict):
+    """
+    Dispatcher principal — roteia para o gerador correto conforme data_type.
+    Nomes de tipo usam PascalCase (API pública dos geradores).
+    """
 
-    '''
-        NumericTypes
-    '''
-    if 'Serial' in dType:
-        return Serial(recordsToGenerate, dType)
-    
-    if 'Integer' in dType:
-        return Integer(recordsToGenerate, dType)
+    # --- TextTypes ---
+    if 'FullName' in data_type:
+        return FullName(records_to_generate, data_type)
+    if 'FirstName' in data_type:
+        return FirstName(records_to_generate, data_type, value_dict)
+    if 'LastName' in data_type:
+        return LastName(records_to_generate, data_type, value_dict)
+    if 'Email' in data_type:
+        return Email(records_to_generate, data_type, value_dict)
+    if data_type == 'InitName':
+        return InitName(records_to_generate, data_type, value_dict)
+    if data_type == 'UserName' or data_type.startswith('UserName:'):
+        return UserName(records_to_generate, data_type, value_dict)
+    if data_type == 'Sex':
+        return Sex(records_to_generate, data_type)
+    if data_type == 'CPF':
+        return CPF(records_to_generate, data_type)
+    if "Varchar" in data_type:
+        return Varchar(records_to_generate, data_type)
+    if "Address" in data_type:
+        return Address(records_to_generate, data_type)
+    if "City" in data_type:
+        return City(records_to_generate, data_type, value_dict)
+    if "StateProvince" in data_type:
+        return StateProvince(records_to_generate, data_type, value_dict)
 
+    # --- NumericTypes ---
+    if 'Serial' in data_type:
+        return Serial(records_to_generate, data_type)
+    if 'Integer' in data_type:
+        return Integer(records_to_generate, data_type)
 
-    '''
-        DateTimeTypes
-    '''
-    if 'Date' in dType and 'DateTime' not in dType:
-        return Date(recordsToGenerate, dType)
-    if 'DateTime' in dType:
-        return DateTime(recordsToGenerate, dType)
-    '''
-        Set a Default data, wich returns itself, to set default values on fields
-        Example1
-        Default:'00235'
-        Return: '00235'
-        Example2
-        Default:00235
-        Return: 00235
-    '''
-    if "Default" in dType:
-        dataList = []
-        for i in range(recordsToGenerate):
-            dataList.append(dType.split(":")[1])
-        return dataList
+    # --- DateTimeTypes ---
+    if 'Date' in data_type and 'DateTime' not in data_type:
+        return Date(records_to_generate, data_type)
+    if 'DateTime' in data_type:
+        return DateTime(records_to_generate, data_type)
 
-    '''
-        Novos tipos v2.1
-    '''
-    if 'Phone' in dType:
-        return Phone(recordsToGenerate, dType)
-    if 'CNPJ' in dType:
-        return CNPJ(recordsToGenerate, dType)
-    if 'CEP' in dType:
-        return CEP(recordsToGenerate, dType)
-    if 'UUID' in dType:
-        return UUID(recordsToGenerate, dType)
-    if 'Boolean' in dType:
-        return Boolean(recordsToGenerate, dType)
+    # --- Default (retorna valor fixo) ---
+    if "Default" in data_type:
+        return [data_type.split(":")[1] for _ in range(records_to_generate)]
+
+    # --- Novos tipos v2.1 ---
+    if 'Phone' in data_type:
+        return Phone(records_to_generate, data_type)
+    if 'CNPJ' in data_type:
+        return CNPJ(records_to_generate, data_type)
+    if 'CEP' in data_type:
+        return CEP(records_to_generate, data_type)
+    if 'UUID' in data_type:
+        return UUID(records_to_generate, data_type)
+    if 'Boolean' in data_type:
+        return Boolean(records_to_generate, data_type)
