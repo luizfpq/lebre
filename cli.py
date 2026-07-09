@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
 """
-    Lebre CLI — command-line interface for the database populator.
+Lebre CLI — command-line interface for the database populator.
 
-    Usage:
-        lebre create-table --name tbl_users --fields "id,nome,email" \
-                           --types "Serial,FullName,Email" --records 100
-        lebre populate [--tables-dir tables] [--output-dir results] [--format sql]
-        lebre list-types
+Usage:
+    lebre create-table --name tbl_users --fields "id,nome,email" \
+                       --types "Serial,FullName,Email" --records 100
+    lebre populate [--tables-dir tables] [--output-dir results] [--format sql]
+    lebre list-types
 """
+
+from __future__ import annotations
+
 __author__ = "Luiz F. P. Quirino"
 __copyright__ = "Copyleft 2020, Planet Earth"
 __license__ = "GPL v3"
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 import argparse
 import json
@@ -27,16 +29,28 @@ try:
 except ImportError:
     HAS_YAML = False
 
-from generators.DataLoader import DataLoad
+from generators.DataLoader import DataLoad, GeneratorError
 from generators.Getters import get_table_name, get_count_records_to_generate, get_count_field_list
+
+
+# ---------------------------------------------------------------------------
+# Exceptions
+# ---------------------------------------------------------------------------
+
+class LebreError(Exception):
+    """Erro de operação do CLI."""
+
+
+class TableFileError(LebreError):
+    """Erro ao carregar/validar arquivo de tabela."""
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def get_next_number(directory, extension):
-    """Determina o próximo número sequencial para arquivos no formato NN_nome.ext"""
+def get_next_number(directory: str, extension: str) -> int:
+    """Determina o próximo número sequencial para arquivos no formato NN_nome.ext."""
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -51,42 +65,82 @@ def get_next_number(directory, extension):
     return max(numbers) + 1 if numbers else 0
 
 
-def _load_table_file(filepath):
-    """Carrega definição de tabela de JSON, YAML ou TOML. Retorna lista de dicts."""
+def _load_table_file(filepath: str) -> list[dict]:
+    """
+    Carrega definição de tabela de JSON, YAML ou TOML.
+    Retorna lista de dicts validada.
+    """
+    if not os.path.isfile(filepath):
+        raise TableFileError(f"Arquivo não encontrado: '{filepath}'")
+
     ext = os.path.splitext(filepath)[1].lower()
 
-    if ext == '.json':
-        with open(filepath, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-    elif ext in ('.yaml', '.yml'):
-        if not HAS_YAML:
-            print("Erro: pacote 'pyyaml' não instalado. Instale com: pip install pyyaml",
-                  file=sys.stderr)
-            sys.exit(1)
-        with open(filepath, 'r', encoding='utf-8') as f:
-            data = yaml.safe_load(f)
-    elif ext == '.toml':
-        with open(filepath, 'rb') as f:
-            data = tomllib.load(f)
-        # TOML retorna dict; normalizar para lista
-        if isinstance(data, dict) and 'TableName' in data:
-            data = [data]
-        elif isinstance(data, dict) and 'table' in data:
-            # suporte a [table] como seção
-            data = [data['table']]
-    else:
-        print(f"Formato não suportado: '{ext}'. Use .json, .yaml ou .toml.", file=sys.stderr)
-        sys.exit(1)
+    try:
+        if ext == '.json':
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        elif ext in ('.yaml', '.yml'):
+            if not HAS_YAML:
+                raise TableFileError(
+                    "Pacote 'pyyaml' não instalado. Instale com: pip install 'lebre[yaml]'"
+                )
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+        elif ext == '.toml':
+            with open(filepath, 'rb') as f:
+                data = tomllib.load(f)
+            if isinstance(data, dict) and 'TableName' in data:
+                data = [data]
+            elif isinstance(data, dict) and 'table' in data:
+                data = [data['table']]
+        else:
+            raise TableFileError(
+                f"Formato não suportado: '{ext}'. Use .json, .yaml ou .toml."
+            )
+    except (json.JSONDecodeError, ValueError, tomllib.TOMLDecodeError) as exc:
+        raise TableFileError(f"Erro de parse em '{filepath}': {exc}") from exc
 
     # Normalizar: se veio dict solto, envelopar em lista
     if isinstance(data, dict):
         data = [data]
 
+    if not data:
+        raise TableFileError(f"Arquivo vazio ou inválido: '{filepath}'")
+
+    # Validar campos obrigatórios
+    required_keys = ('TableName', 'FieldList', 'DataType', 'RecordsToGenerate')
+    for i, table in enumerate(data):
+        if not isinstance(table, dict):
+            raise TableFileError(
+                f"Entrada #{i} em '{filepath}' não é um dicionário válido"
+            )
+        missing = [k for k in required_keys if k not in table]
+        if missing:
+            raise TableFileError(
+                f"Campos obrigatórios ausentes em '{filepath}': {', '.join(missing)}"
+            )
+        # Validar consistência fields vs types
+        fields = [f.strip() for f in table['FieldList'].split(',')]
+        types = [t.strip() for t in table['DataType'].split(',')]
+        if len(fields) != len(types):
+            raise TableFileError(
+                f"Inconsistência em '{filepath}' tabela '{table['TableName']}': "
+                f"{len(fields)} campos mas {len(types)} tipos definidos"
+            )
+        if not isinstance(table['RecordsToGenerate'], int) or table['RecordsToGenerate'] <= 0:
+            raise TableFileError(
+                f"RecordsToGenerate deve ser inteiro > 0 em '{filepath}', "
+                f"recebeu: {table['RecordsToGenerate']}"
+            )
+
     return data
 
 
-def _find_table_files(tables_dir):
+def _find_table_files(tables_dir: str) -> list[str]:
     """Busca todos os arquivos de tabela suportados no diretório, ordenados."""
+    if not os.path.isdir(tables_dir):
+        raise LebreError(f"Diretório de tabelas não encontrado: '{tables_dir}'")
+
     patterns = ['*.json', '*.yaml', '*.yml', '*.toml']
     files = []
     for pat in patterns:
@@ -110,10 +164,20 @@ AVAILABLE_TYPES = [
 # create-table
 # ---------------------------------------------------------------------------
 
-def cmd_create_table(args):
+def cmd_create_table(args: argparse.Namespace) -> None:
     """Cria um arquivo de definição de tabela (JSON, YAML ou TOML)."""
     tables_dir = args.tables_dir
     table_format = args.table_format
+
+    # Validar consistência de campos e tipos
+    fields = [f.strip() for f in args.fields.split(',')]
+    types = [t.strip() for t in args.types.split(',')]
+    if len(fields) != len(types):
+        print(
+            f"Erro: número de campos ({len(fields)}) difere do número de tipos ({len(types)}).",
+            file=sys.stderr
+        )
+        sys.exit(1)
 
     table = {
         "TableName": args.name,
@@ -125,23 +189,29 @@ def cmd_create_table(args):
     num = get_next_number(tables_dir, table_format)
     filename = os.path.join(tables_dir, f"{num:02d}_{args.name}.{table_format}")
 
-    if table_format == 'json':
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump([table], f, indent=4, ensure_ascii=False)
-    elif table_format in ('yaml', 'yml'):
-        if not HAS_YAML:
-            print("Erro: pacote 'pyyaml' não instalado. Instale com: pip install pyyaml",
-                  file=sys.stderr)
-            sys.exit(1)
-        with open(filename, 'w', encoding='utf-8') as f:
-            yaml.dump(table, f, default_flow_style=False, allow_unicode=True)
-    elif table_format == 'toml':
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write('[table]\n')
-            f.write(f'TableName = "{table["TableName"]}"\n')
-            f.write(f'FieldList = "{table["FieldList"]}"\n')
-            f.write(f'DataType = "{table["DataType"]}"\n')
-            f.write(f'RecordsToGenerate = {table["RecordsToGenerate"]}\n')
+    try:
+        if table_format == 'json':
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump([table], f, indent=4, ensure_ascii=False)
+        elif table_format in ('yaml', 'yml'):
+            if not HAS_YAML:
+                print(
+                    "Erro: pacote 'pyyaml' não instalado. Instale com: pip install 'lebre[yaml]'",
+                    file=sys.stderr
+                )
+                sys.exit(1)
+            with open(filename, 'w', encoding='utf-8') as f:
+                yaml.dump(table, f, default_flow_style=False, allow_unicode=True)
+        elif table_format == 'toml':
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write('[table]\n')
+                f.write(f'TableName = "{table["TableName"]}"\n')
+                f.write(f'FieldList = "{table["FieldList"]}"\n')
+                f.write(f'DataType = "{table["DataType"]}"\n')
+                f.write(f'RecordsToGenerate = {table["RecordsToGenerate"]}\n')
+    except OSError as exc:
+        print(f"Erro ao salvar tabela: {exc}", file=sys.stderr)
+        sys.exit(1)
 
     print(f"Tabela salva em '{filename}'.")
 
@@ -150,14 +220,19 @@ def cmd_create_table(args):
 # populate
 # ---------------------------------------------------------------------------
 
-def cmd_populate(args):
+def cmd_populate(args: argparse.Namespace) -> None:
     """Gera arquivo de saída a partir das definições em tables_dir."""
     tables_dir = args.tables_dir
     output_dir = args.output_dir
     output_format = args.format
     use_stdout = args.stdout
 
-    table_files = _find_table_files(tables_dir)
+    try:
+        table_files = _find_table_files(tables_dir)
+    except LebreError as exc:
+        print(f"Erro: {exc}", file=sys.stderr)
+        sys.exit(1)
+
     if not table_files:
         print(f"Nenhuma tabela encontrada em '{tables_dir}/'.", file=sys.stderr)
         sys.exit(1)
@@ -168,80 +243,93 @@ def cmd_populate(args):
         num = get_next_number(output_dir, output_format)
         output_file = os.path.join(output_dir, f"{num:02d}_saida.{output_format}")
 
-    if output_format == 'sql':
-        _populate_sql(table_files, output_file, dialect=args.dialect)
-    elif output_format == 'csv':
-        _populate_csv(table_files, output_file)
-    elif output_format == 'json':
-        _populate_json(table_files, output_file)
-    else:
-        print(f"Formato '{output_format}' não suportado.", file=sys.stderr)
+    try:
+        if output_format == 'sql':
+            _populate_sql(table_files, output_file, dialect=args.dialect)
+        elif output_format == 'csv':
+            _populate_csv(table_files, output_file)
+        elif output_format == 'json':
+            _populate_json(table_files, output_file)
+        else:
+            print(f"Formato '{output_format}' não suportado.", file=sys.stderr)
+            sys.exit(1)
+    except (TableFileError, GeneratorError) as exc:
+        print(f"Erro ao gerar dados: {exc}", file=sys.stderr)
+        sys.exit(1)
+    except OSError as exc:
+        print(f"Erro de I/O: {exc}", file=sys.stderr)
         sys.exit(1)
 
     if not use_stdout:
         print(f"Arquivo gerado: '{output_file}'.")
 
 
-def _generate_values(table_dict):
-    """Gera value_dict para uma definição de tabela (lógica extraída do table_populator)."""
+def _generate_values(table_dict: list[dict]) -> tuple[list[list], int, int]:
+    """
+    Gera value_dict para uma definição de tabela.
+
+    Returns:
+        (value_dict, records, field_count)
+    """
     records = get_count_records_to_generate(table_dict)
     field_count = get_count_field_list(table_dict)
     data_list = [item.strip() for item in table_dict[0]['DataType'].split(",")]
 
-    value_dict = []
-    fullname_values = []
+    value_dict: list[list] = []
+    fullname_values: list[str] = []
 
     # Gera FullName primeiro (necessário para FirstName, LastName, UserName, Email)
+    dependent_types = ('FirstName', 'LastName', 'UserName', 'Email')
     has_fullname_field = any('FullName' in item for item in data_list)
-    needs_fullname = any(k in item for item in data_list for k in ['FirstName', 'LastName', 'UserName', 'Email'])
+    needs_fullname = any(
+        dep in item for item in data_list for dep in dependent_types
+    )
 
     if has_fullname_field or needs_fullname:
         for item in data_list:
             if 'FullName' in item:
-                fullname_values = DataLoad(records, item.strip(), value_dict)
+                fullname_values = DataLoad(records, item, value_dict)
                 break
         else:
             fullname_values = DataLoad(records, 'FullName', value_dict)
 
     # Gera os outros campos
     for item in data_list:
-        if 'FullName' not in item:
-            if any(k in item for k in ['FirstName', 'LastName', 'UserName', 'Email']):
-                values = DataLoad(records, item.strip(), [fullname_values])
-            else:
-                values = DataLoad(records, item.strip(), value_dict)
-            value_dict.append(values)
+        if 'FullName' in item:
+            continue  # será inserido na posição correta depois
+        if any(dep in item for dep in dependent_types):
+            values = DataLoad(records, item, [fullname_values])
+        else:
+            values = DataLoad(records, item, value_dict)
+        value_dict.append(values)
 
     # Insere FullName na posição correta se estava no DataType
     for i, item in enumerate(data_list):
         if 'FullName' in item:
-            value_dict.insert(i, [f"{name}" for name in fullname_values])
+            value_dict.insert(i, [name for name in fullname_values])
             break
 
     return value_dict, records, field_count
 
 
-def _quote_identifier(name, dialect):
+def _quote_identifier(name: str, dialect: str) -> str:
     """Aplica quoting ao nome de tabela/coluna conforme o dialeto SQL."""
     if dialect == 'mysql':
         return f'`{name}`'
     elif dialect == 'postgresql':
         return f'"{name}"'
-    else:  # sqlite
-        return name
+    return name  # sqlite
 
 
-def _populate_sql(table_files, output_file, dialect='postgresql'):
+def _populate_sql(table_files: list[str], output_file: str | None, dialect: str = 'postgresql') -> None:
     """Gera saída no formato SQL INSERT."""
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
     try:
         for tf in table_files:
             table_dict = _load_table_file(tf)
-
             table_name = get_table_name(table_dict)
             value_dict, records, field_count = _generate_values(table_dict)
 
-            # Quoting do nome da tabela e campos
             quoted_table = _quote_identifier(table_name, dialect)
             fields = [f.strip() for f in table_dict[0]['FieldList'].split(',')]
             quoted_fields = ', '.join(_quote_identifier(f, dialect) for f in fields)
@@ -253,47 +341,41 @@ def _populate_sql(table_files, output_file, dialect='postgresql'):
                 separator = ';' if i == records - 1 else ','
                 fh.write(f"\t({values}){separator}\n")
     finally:
-        if output_file:
+        if output_file and fh is not sys.stdout:
             fh.close()
 
 
-def _populate_csv(table_files, output_file):
-    """Gera saída no formato CSV (uma tabela por seção, separadas por linha em branco)."""
+def _populate_csv(table_files: list[str], output_file: str | None) -> None:
+    """Gera saída no formato CSV."""
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
     try:
         for tf in table_files:
             table_dict = _load_table_file(tf)
-
             fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
             value_dict, records, field_count = _generate_values(table_dict)
 
-            # Header
             fh.write(','.join(fields) + '\n')
 
-            # Rows
             for i in range(records):
                 row = []
                 for col in range(field_count):
                     val = str(value_dict[col][i])
-                    # Remove aspas SQL simples para CSV
                     if val.startswith("'") and val.endswith("'"):
                         val = val[1:-1]
                     row.append(val)
                 fh.write(','.join(row) + '\n')
-
             fh.write('\n')
     finally:
-        if output_file:
+        if output_file and fh is not sys.stdout:
             fh.close()
 
 
-def _populate_json(table_files, output_file):
+def _populate_json(table_files: list[str], output_file: str | None) -> None:
     """Gera saída no formato JSON (array de objetos por tabela)."""
-    output = {}
+    output: dict[str, list[dict]] = {}
 
     for tf in table_files:
         table_dict = _load_table_file(tf)
-
         table_name = get_table_name(table_dict)
         fields = [field.strip() for field in table_dict[0]['FieldList'].split(',')]
         value_dict, records, field_count = _generate_values(table_dict)
@@ -303,12 +385,10 @@ def _populate_json(table_files, output_file):
             row = {}
             for col in range(field_count):
                 val = value_dict[col][i]
-                # Remove aspas SQL simples para JSON
                 if isinstance(val, str) and val.startswith("'") and val.endswith("'"):
                     val = val[1:-1]
                 row[fields[col]] = val
             rows.append(row)
-
         output[table_name] = rows
 
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
@@ -316,7 +396,7 @@ def _populate_json(table_files, output_file):
         json.dump(output, fh, indent=2, ensure_ascii=False)
         fh.write('\n')
     finally:
-        if output_file:
+        if output_file and fh is not sys.stdout:
             fh.close()
 
 
@@ -324,7 +404,7 @@ def _populate_json(table_files, output_file):
 # list-types
 # ---------------------------------------------------------------------------
 
-def cmd_list_types(args):
+def cmd_list_types(args: argparse.Namespace) -> None:
     """Lista os tipos de dados disponíveis."""
     print("Tipos de dados disponíveis:\n")
     for t in AVAILABLE_TYPES:
@@ -340,7 +420,7 @@ def cmd_list_types(args):
 # Parser
 # ---------------------------------------------------------------------------
 
-def build_parser():
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog='lebre',
         description='Lebre — Database Populator. Gera dados fictícios para popular tabelas.',
@@ -357,12 +437,12 @@ def build_parser():
     ct.add_argument('--records', type=int, required=True, help='Número de registros a gerar')
     ct.add_argument('--tables-dir', default='tables', help='Diretório para salvar (default: tables)')
     ct.add_argument('--table-format', choices=['json', 'yaml', 'toml'], default='json',
-                     help='Formato do arquivo de tabela (default: json)')
+                    help='Formato do arquivo de tabela (default: json)')
     ct.set_defaults(func=cmd_create_table)
 
     # populate
     pop = subparsers.add_parser('populate', help='Gera dados a partir das tabelas definidas')
-    pop.add_argument('--tables-dir', default='tables', help='Diretório com JSONs de tabela (default: tables)')
+    pop.add_argument('--tables-dir', default='tables', help='Diretório com definições de tabela (default: tables)')
     pop.add_argument('--output-dir', default='results', help='Diretório de saída (default: results)')
     pop.add_argument('--format', choices=['sql', 'csv', 'json'], default='sql',
                      help='Formato de saída (default: sql)')
@@ -379,7 +459,7 @@ def build_parser():
     return parser
 
 
-def main():
+def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
 

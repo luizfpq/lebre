@@ -1,81 +1,125 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
 """
-    Dataloader defines data types and load them all from datasource files
+Dispatcher de tipos de dados — roteia para o gerador correto conforme data_type.
 """
-__author__ = "Luiz F. P. Quirino"
-__copyright__ = "Copyleft 2020, Planet Earth"
-__credits__ = ["LuizQuirino"]
-__license__ = "GPL v3"
-__version__ = "2.1.0"
-__maintainer__ = "LuizQuirino"
-__email__ = "luizfpq@gmail.com"
-__status__ = "Dev"
+
+from __future__ import annotations
+
+from generators.TextTypes import (
+    FullName, FirstName, LastName, UserName, Email, InitName,
+    Sex, CPF, CNPJ, Phone, CEP, UUID, Boolean,
+    Varchar, Address, City, StateProvince,
+    GeneratorError,
+)
+from generators.DateTime import Date, DateTime
+from generators.NumericTypes import Serial, Integer
+
+__all__ = ["DataLoad", "GeneratorError"]
 
 
-import random
+# ---------------------------------------------------------------------------
+# Dispatch table — mapeia prefixo do tipo para (função, aceita_value_dict)
+# ---------------------------------------------------------------------------
 
-from generators.TextTypes import *
-from generators.DateTime import *
-from generators.NumericTypes import *
+# Geradores que NÃO recebem value_dict (independentes)
+_INDEPENDENT_GENERATORS: dict[str, callable] = {
+    'Serial': Serial,
+    'Integer': Integer,
+    'FullName': FullName,
+    'CPF': CPF,
+    'CNPJ': CNPJ,
+    'Phone': Phone,
+    'CEP': CEP,
+    'UUID': UUID,
+    'Boolean': Boolean,
+    'Varchar': Varchar,
+    'Sex': Sex,
+    'Address': Address,
+    'Date': Date,
+    'DateTime': DateTime,
+}
+
+# Geradores que RECEBEM value_dict (dependem de campos anteriores)
+_DEPENDENT_GENERATORS: dict[str, callable] = {
+    'FirstName': FirstName,
+    'LastName': LastName,
+    'UserName': UserName,
+    'Email': Email,
+    'InitName': InitName,
+    'City': City,
+    'StateProvince': StateProvince,
+}
+
+# Ordem de resolução — tipos mais específicos primeiro para evitar match parcial
+# (ex: "DateTime" antes de "Date", "StateProvince" antes de qualquer substring)
+_DISPATCH_ORDER: list[tuple[str, callable, bool]] = [
+    # (prefixo, função, requer_value_dict)
+    ('DateTime', DateTime, False),
+    ('Date', Date, False),
+    ('StateProvince', StateProvince, True),
+    ('FirstName', FirstName, True),
+    ('LastName', LastName, True),
+    ('FullName', FullName, False),
+    ('UserName', UserName, True),
+    ('Email', Email, True),
+    ('InitName', InitName, True),
+    ('Serial', Serial, False),
+    ('Integer', Integer, False),
+    ('CPF', CPF, False),
+    ('CNPJ', CNPJ, False),
+    ('Phone', Phone, False),
+    ('CEP', CEP, False),
+    ('UUID', UUID, False),
+    ('Boolean', Boolean, False),
+    ('Varchar', Varchar, False),
+    ('Sex', Sex, False),
+    ('Address', Address, False),
+    ('City', City, True),
+    ('Default', None, False),
+]
 
 
-def DataLoad(records_to_generate, data_type, value_dict):
+def DataLoad(records_to_generate: int, data_type: str, value_dict: list) -> list:
     """
     Dispatcher principal — roteia para o gerador correto conforme data_type.
-    Nomes de tipo usam PascalCase (API pública dos geradores).
+
+    Args:
+        records_to_generate: Número de registros a gerar.
+        data_type: Tipo de dado (ex: 'Serial', 'CPF', 'FullName', 'Integer:0:100').
+        value_dict: Lista de campos já gerados (para tipos dependentes).
+
+    Returns:
+        Lista com os valores gerados.
+
+    Raises:
+        GeneratorError: Se o tipo não for reconhecido ou houver erro de configuração.
     """
+    if records_to_generate <= 0:
+        raise GeneratorError(
+            f"records_to_generate deve ser > 0, recebeu {records_to_generate}"
+        )
 
-    # --- TextTypes ---
-    if 'FullName' in data_type:
-        return FullName(records_to_generate, data_type)
-    if 'FirstName' in data_type:
-        return FirstName(records_to_generate, data_type, value_dict)
-    if 'LastName' in data_type:
-        return LastName(records_to_generate, data_type, value_dict)
-    if 'Email' in data_type:
-        return Email(records_to_generate, data_type, value_dict)
-    if data_type == 'InitName':
-        return InitName(records_to_generate, data_type, value_dict)
-    if data_type == 'UserName' or data_type.startswith('UserName:'):
-        return UserName(records_to_generate, data_type, value_dict)
-    if data_type == 'Sex':
-        return Sex(records_to_generate, data_type)
-    if data_type == 'CPF':
-        return CPF(records_to_generate, data_type)
-    if "Varchar" in data_type:
-        return Varchar(records_to_generate, data_type)
-    if "Address" in data_type:
-        return Address(records_to_generate, data_type)
-    if "City" in data_type:
-        return City(records_to_generate, data_type, value_dict)
-    if "StateProvince" in data_type:
-        return StateProvince(records_to_generate, data_type, value_dict)
+    data_type = data_type.strip()
 
-    # --- NumericTypes ---
-    if 'Serial' in data_type:
-        return Serial(records_to_generate, data_type)
-    if 'Integer' in data_type:
-        return Integer(records_to_generate, data_type)
+    for prefix, generator_fn, needs_value_dict in _DISPATCH_ORDER:
+        if prefix in data_type:
+            # Caso especial: Default retorna valor fixo
+            if prefix == 'Default':
+                parts = data_type.split(":", 1)
+                if len(parts) < 2:
+                    raise GeneratorError(
+                        f"Formato inválido para Default: '{data_type}'. "
+                        "Esperado: Default:valor (ex: Default:'ativo')"
+                    )
+                value = parts[1]
+                return [value] * records_to_generate
 
-    # --- DateTimeTypes ---
-    if 'Date' in data_type and 'DateTime' not in data_type:
-        return Date(records_to_generate, data_type)
-    if 'DateTime' in data_type:
-        return DateTime(records_to_generate, data_type)
+            if needs_value_dict:
+                return generator_fn(records_to_generate, data_type, value_dict)
+            else:
+                return generator_fn(records_to_generate, data_type)
 
-    # --- Default (retorna valor fixo) ---
-    if "Default" in data_type:
-        return [data_type.split(":")[1] for _ in range(records_to_generate)]
-
-    # --- Novos tipos v2.1 ---
-    if 'Phone' in data_type:
-        return Phone(records_to_generate, data_type)
-    if 'CNPJ' in data_type:
-        return CNPJ(records_to_generate, data_type)
-    if 'CEP' in data_type:
-        return CEP(records_to_generate, data_type)
-    if 'UUID' in data_type:
-        return UUID(records_to_generate, data_type)
-    if 'Boolean' in data_type:
-        return Boolean(records_to_generate, data_type)
+    raise GeneratorError(
+        f"Tipo de dado desconhecido: '{data_type}'. "
+        f"Use 'lebre list-types' para ver os tipos disponíveis."
+    )
