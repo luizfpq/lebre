@@ -74,6 +74,53 @@ def _search_in_datasource(filename: str, search_term: str) -> list[str]:
     return results
 
 
+# ---------------------------------------------------------------------------
+# Index de cidades — carrega uma vez, acesso O(1) por UF ou cidade
+# ---------------------------------------------------------------------------
+
+_city_index: dict | None = None
+
+
+def _get_city_index() -> dict:
+    """
+    Retorna índice estruturado do CityBR.txt.
+    Formato: {
+        'by_uf': {'SP': [{'state': ..., 'uf': ..., 'city': ...}, ...], ...},
+        'by_city': {'MANAUS': {'state': ..., 'uf': ..., 'city': ...}, ...},
+        'all': [{'state': ..., 'uf': ..., 'city': ...}, ...]
+    }
+    """
+    global _city_index
+    if _city_index is not None:
+        return _city_index
+
+    lines = _get_datasource('CityBR.txt')
+    by_uf: dict[str, list[dict]] = {}
+    by_city: dict[str, dict] = {}
+    all_cities: list[dict] = []
+
+    for line in lines:
+        parts = line.split(',')
+        if len(parts) < 3:
+            continue
+        entry = {
+            'state': parts[0].strip(),
+            'uf': parts[1].strip(),
+            'city': parts[2].strip(),
+        }
+        all_cities.append(entry)
+
+        uf = entry['uf']
+        if uf not in by_uf:
+            by_uf[uf] = []
+        by_uf[uf].append(entry)
+
+        by_city[entry['city']] = entry
+
+    _city_index = {'by_uf': by_uf, 'by_city': by_city, 'all': all_cities}
+    return _city_index
+
+
 def _validate_records(records_to_generate: int) -> None:
     """Valida que o número de registros é positivo."""
     if records_to_generate <= 0:
@@ -284,20 +331,20 @@ def City(records_to_generate: int, data_type: str, value_dict: list) -> list[str
         City:SP  -> cidade do estado especificado
     """
     _validate_records(records_to_generate)
+    index = _get_city_index()
 
     if ":" in data_type:
-        uf = data_type.split(":")[1]
-        lines = _search_in_datasource('CityBR.txt', uf)
+        uf = data_type.split(":")[1].strip().upper()
+        if uf not in index['by_uf']:
+            raise GeneratorError(
+                f"UF '{uf}' não encontrada no datasource de cidades. "
+                f"Válidas: {', '.join(sorted(index['by_uf'].keys()))}"
+            )
+        pool = index['by_uf'][uf]
     else:
-        lines = _get_datasource('CityBR.txt')
+        pool = index['all']
 
-    results = []
-    for _ in range(records_to_generate):
-        line = random.choice(lines)
-        parts = line.split(",")
-        city = parts[2].strip() if len(parts) > 2 else line.strip()
-        results.append(f"'{city}'")
-    return results
+    return [f"'{random.choice(pool)['city']}'" for _ in range(records_to_generate)]
 
 
 def StateProvince(records_to_generate: int, data_type: str, value_dict: list) -> list[str]:
@@ -305,16 +352,16 @@ def StateProvince(records_to_generate: int, data_type: str, value_dict: list) ->
     Gera estados/províncias brasileiros.
 
     Uso:
-        StateProvince        -> estado aleatório
-        StateProvince:SP     -> filtra por UF (retorna nome do estado)
+        StateProvince        -> estado aleatório (nome completo)
+        StateProvince:SP     -> filtra por UF
         StateProvince:Find   -> busca estado compatível com a cidade anterior
     """
     _validate_records(records_to_generate)
+    index = _get_city_index()
 
     if ":" in data_type:
-        param = data_type.split(":")[1]
+        param = data_type.split(":")[1].strip()
         if param == "Find":
-            # Busca estado compatível com a última cidade gerada
             if not value_dict:
                 raise GeneratorError(
                     "StateProvince:Find requer City gerado previamente"
@@ -322,25 +369,34 @@ def StateProvince(records_to_generate: int, data_type: str, value_dict: list) ->
             last_field = value_dict[-1]
             results = []
             for i in range(records_to_generate):
-                city_name = str(last_field[i]).replace("'", "")
-                matched = _search_in_datasource('CityBR.txt', city_name)
-                state = matched[0].split(",")[0].strip()
-                results.append(f"'{state}'")
+                city_name = str(last_field[i]).replace("'", "").strip()
+                entry = index['by_city'].get(city_name)
+                if entry:
+                    results.append(f"'{entry['state']}'")
+                else:
+                    # Fallback: busca parcial
+                    found = False
+                    for e in index['all']:
+                        if city_name in e['city']:
+                            results.append(f"'{e['state']}'")
+                            found = True
+                            break
+                    if not found:
+                        fallback = random.choice(index['all'])
+                        results.append(f"'{fallback['state']}'")
             return results
         else:
-            lines = _search_in_datasource('CityBR.txt', param)
+            uf = param.upper()
+            if uf not in index['by_uf']:
+                raise GeneratorError(
+                    f"UF '{uf}' não encontrada. "
+                    f"Válidas: {', '.join(sorted(index['by_uf'].keys()))}"
+                )
+            pool = index['by_uf'][uf]
+            return [f"'{random.choice(pool)['state']}'" for _ in range(records_to_generate)]
     else:
         lines = _get_datasource('StateProvinceBR.txt')
-
-    results = []
-    for _ in range(records_to_generate):
-        line = random.choice(lines)
-        if ":" in data_type:
-            state = line.split(",")[0].strip()
-        else:
-            state = line.strip()
-        results.append(f"'{state}'")
-    return results
+        return [f"'{random.choice(lines)}'" for _ in range(records_to_generate)]
 
 
 # ---------------------------------------------------------------------------
