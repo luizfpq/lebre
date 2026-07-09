@@ -29,7 +29,7 @@ try:
 except ImportError:
     HAS_YAML = False
 
-from generators.DataLoader import DataLoad, GeneratorError
+from generators.DataLoader import DataLoad, GeneratorError, set_locale
 from generators.Getters import get_table_name, get_count_records_to_generate, get_count_field_list
 
 
@@ -223,6 +223,7 @@ def cmd_create_table(args: argparse.Namespace) -> None:
 
 def cmd_populate(args: argparse.Namespace) -> None:
     """Gera arquivo de saída a partir das definições em tables_dir."""
+    set_locale(args.locale)
     tables_dir = args.tables_dir
     output_dir = args.output_dir
     output_format = args.format
@@ -471,6 +472,8 @@ def build_parser() -> argparse.ArgumentParser:
                      help='Formato de saída (default: sql)')
     pop.add_argument('--dialect', choices=['postgresql', 'mysql', 'sqlite'], default='postgresql',
                      help='Dialeto SQL para quoting (default: postgresql)')
+    pop.add_argument('--locale', choices=['br', 'en'], default='br',
+                     help='Locale dos dados gerados (default: br)')
     pop.add_argument('--stdout', action='store_true',
                      help='Imprime no terminal em vez de salvar em arquivo')
     pop.set_defaults(func=cmd_populate)

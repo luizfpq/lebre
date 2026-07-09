@@ -13,6 +13,7 @@ __all__ = [
     "FullName", "FirstName", "LastName", "UserName", "Email", "InitName",
     "Sex", "CPF", "CNPJ", "Phone", "CEP", "UUID", "Boolean",
     "Varchar", "Address", "City", "StateProvince", "ForeignKey",
+    "set_locale",
 ]
 
 
@@ -29,13 +30,54 @@ class DatasourceError(GeneratorError):
 
 
 # ---------------------------------------------------------------------------
-# Cache de datasources
+# Locale e cache de datasources
 # ---------------------------------------------------------------------------
 
 _datasource_cache: dict[str, list[str]] = {}
 _DATASOURCES_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasources'
 )
+
+# Locale ativo — configurado pelo CLI antes de gerar dados
+_current_locale: str = 'br'
+
+# Mapeamento de datasource genérico -> arquivo por locale
+_LOCALE_FILES: dict[str, dict[str, str]] = {
+    'br': {
+        'FullName': 'FullNameBR.txt',
+        'City': 'CityBR.txt',
+        'StateProvince': 'StateProvinceBR.txt',
+        'AddressType': 'AddressTypeBR.txt',
+        'Sex': 'Sex.txt',
+    },
+    'en': {
+        'FullName': 'en/FullNameEN.txt',
+        'City': 'en/CityEN.txt',
+        'StateProvince': 'en/StateProvinceEN.txt',
+        'AddressType': 'en/AddressTypeEN.txt',
+        'Sex': 'en/Sex.txt',
+    },
+}
+
+
+def set_locale(locale: str) -> None:
+    """Define o locale ativo para os geradores."""
+    global _current_locale, _city_index
+    locale = locale.lower()
+    if locale not in _LOCALE_FILES:
+        raise GeneratorError(
+            f"Locale '{locale}' não suportado. Disponíveis: {', '.join(sorted(_LOCALE_FILES.keys()))}"
+        )
+    if locale != _current_locale:
+        _current_locale = locale
+        # Invalida cache do index de cidades ao trocar locale
+        _city_index = None
+
+
+def _get_locale_file(datasource_key: str) -> str:
+    """Retorna o nome do arquivo para o datasource no locale ativo."""
+    locale_map = _LOCALE_FILES.get(_current_locale, _LOCALE_FILES['br'])
+    return locale_map.get(datasource_key, _LOCALE_FILES['br'].get(datasource_key, ''))
 
 
 def _get_datasource(filename: str) -> list[str]:
@@ -94,7 +136,7 @@ def _get_city_index() -> dict:
     if _city_index is not None:
         return _city_index
 
-    lines = _get_datasource('CityBR.txt')
+    lines = _get_datasource(_get_locale_file('City'))
     by_uf: dict[str, list[dict]] = {}
     by_city: dict[str, dict] = {}
     all_cities: list[dict] = []
@@ -191,7 +233,7 @@ def CNPJ(records_to_generate: int, data_type: str) -> list[str]:
 def FullName(records_to_generate: int, data_type: str) -> list[str]:
     """Gera nomes completos a partir do datasource FullNameBR.txt."""
     _validate_records(records_to_generate)
-    lines = _get_datasource('FullNameBR.txt')
+    lines = _get_datasource(_get_locale_file('FullName'))
     return [f"'{random.choice(lines)}'" for _ in range(records_to_generate)]
 
 
@@ -287,7 +329,7 @@ def InitName(records_to_generate: int, data_type: str, value_dict: list) -> list
 def Sex(records_to_generate: int, data_type: str) -> list[str]:
     """Gera valor aleatório de sexo/gênero do datasource."""
     _validate_records(records_to_generate)
-    lines = _get_datasource('Sex.txt')
+    lines = _get_datasource(_get_locale_file('Sex'))
     return [f"'{random.choice(lines)}'" for _ in range(records_to_generate)]
 
 
@@ -304,8 +346,8 @@ def Address(records_to_generate: int, data_type: str) -> list[str]:
         Address:Num  -> ex: 'Rua Santos, 127'
     """
     _validate_records(records_to_generate)
-    address_lines = _get_datasource('AddressTypeBR.txt')
-    name_lines = _get_datasource('FullNameBR.txt')
+    address_lines = _get_datasource(_get_locale_file('AddressType'))
+    name_lines = _get_datasource(_get_locale_file('FullName'))
     add_number = ":" in data_type and "Num" in data_type
 
     results = []
@@ -395,7 +437,7 @@ def StateProvince(records_to_generate: int, data_type: str, value_dict: list) ->
             pool = index['by_uf'][uf]
             return [f"'{random.choice(pool)['state']}'" for _ in range(records_to_generate)]
     else:
-        lines = _get_datasource('StateProvinceBR.txt')
+        lines = _get_datasource(_get_locale_file('StateProvince'))
         return [f"'{random.choice(lines)}'" for _ in range(records_to_generate)]
 
 

@@ -9,12 +9,12 @@ from generators.TextTypes import (
     FullName, FirstName, LastName, UserName, Email, InitName,
     Sex, CPF, CNPJ, Phone, CEP, UUID, Boolean,
     Varchar, Address, City, StateProvince, ForeignKey,
-    GeneratorError,
+    GeneratorError, set_locale,
 )
 from generators.DateTime import Date, DateTime
 from generators.NumericTypes import Serial, Integer
 
-__all__ = ["DataLoad", "GeneratorError"]
+__all__ = ["DataLoad", "GeneratorError", "set_locale"]
 
 
 # ---------------------------------------------------------------------------
