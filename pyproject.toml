@@ -8,7 +8,7 @@ version = "2.2.0"
 description = "A Database Populator — generates random data to fill your project's tables."
 readme = "README.md"
 license = "GPL-3.0-or-later"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 authors = [
     { name = "Luiz F. P. Quirino", email = "luizfpq@gmail.com" },
 ]
@@ -29,22 +29,19 @@ Issues = "https://github.com/luizfpq/lebre/issues"
 
 [project.optional-dependencies]
 yaml = ["pyyaml>=6.0"]
+dev = ["pytest>=7.0"]
 
 [project.scripts]
 lebre = "cli:main"
 
 [tool.setuptools]
-py-modules = ["cli", "table_maker", "table_populator"]
+py-modules = ["cli"]
 
 [tool.setuptools.packages.find]
 include = ["generators*", "datasources*"]
 
 [tool.setuptools.package-data]
-datasources = ["*.txt"]
-
-
-[project.optional-dependencies.dev]
-dev = ["pytest>=7.0"]
+datasources = ["**/*.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

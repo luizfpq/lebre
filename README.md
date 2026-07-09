@@ -14,10 +14,11 @@ pip install -e .
 
 After installation the `lebre` command is available globally.
 
-For YAML table support install the optional dependency:
+For YAML table support and dev tools:
 
 ```bash
-pip install -e ".[yaml]"
+pip install -e ".[yaml]"      # YAML/TOML table definitions
+pip install -e ".[dev]"       # pytest
 ```
 
 ## Quick start
@@ -32,12 +33,15 @@ lebre create-table --name tbl_users \
 # Generate SQL
 lebre populate --format sql
 
-# Or print directly to stdout (pipe to psql, mysql, etc.)
+# Print to stdout (pipe to psql, mysql, etc.)
 lebre populate --stdout --format sql | psql mydb
 
 # Generate CSV or JSON
 lebre populate --format csv
 lebre populate --format json --stdout
+
+# Generate with English data
+lebre populate --locale en --format json --stdout
 ```
 
 ## CLI reference
@@ -67,6 +71,7 @@ lebre list-types     Show all available data types
 | `--output-dir` | Output directory (default: `results`) |
 | `--format` | Output format: `sql`, `csv`, `json` (default: `sql`) |
 | `--dialect` | SQL quoting style: `postgresql`, `mysql`, `sqlite` (default: `postgresql`) |
+| `--locale` | Data locale: `br`, `en` (default: `br`) |
 | `--stdout` | Print to terminal instead of writing a file |
 
 ## Available data types
@@ -75,7 +80,7 @@ lebre list-types     Show all available data types
 |------|-------------|---------|
 | `Serial` | Auto-increment integer | `Serial` or `Serial:100` |
 | `Integer:min:max` | Random integer in range | `Integer:0:10` |
-| `FullName` | Full name from BR datasource | `FullName` |
+| `FullName` | Full name from datasource | `FullName` |
 | `FirstName` | First name (derived from FullName) | `FirstName` |
 | `LastName` | Last name (derived from FullName) | `LastName` |
 | `UserName` | Username from full name | `UserName` or `UserName:Num` |
@@ -94,7 +99,37 @@ lebre list-types     Show all available data types
 | `UUID` | UUID v4 | `UUID` |
 | `Boolean` | TRUE/FALSE or 1/0 | `Boolean` or `Boolean:int` |
 | `Varchar:N` | Random string of length N | `Varchar:10` |
+| `ForeignKey:table:field` | Reference to another table's field | `ForeignKey:tbl_deps:id` |
 | `Default:value` | Fixed value for all rows | `Default:'active'` |
+
+## Foreign keys
+
+Define relationships between tables. The referenced table must be processed first (alphabetical file order):
+
+```bash
+# 00_departments.json — processed first
+lebre create-table --name tbl_departments \
+  --fields "id,name" --types "Serial:1,Varchar:15" --records 5
+
+# 01_employees.json — references departments
+lebre create-table --name tbl_employees \
+  --fields "id,name,dept_id" \
+  --types "Serial:1,FullName,ForeignKey:tbl_departments:id" \
+  --records 50
+
+lebre populate --format sql --stdout
+```
+
+The `dept_id` column will only contain valid IDs (1-5) from the departments table.
+
+## Locales
+
+```bash
+lebre populate --locale br --format sql --stdout   # Brazilian data (default)
+lebre populate --locale en --format sql --stdout   # English/US data
+```
+
+Locale affects: FullName, City, StateProvince, Address, Sex. Document-specific types (CPF, CNPJ, CEP, Phone) always generate Brazilian formats.
 
 ## Table definition formats
 
@@ -146,6 +181,16 @@ lebre populate --format csv --stdout > dataset.csv
 
 # Generate JSON for API mocking
 lebre populate --format json --stdout | jq '.tbl_users[:5]'
+
+# English data for international projects
+lebre populate --locale en --format json --stdout > seed.json
+```
+
+## Running tests
+
+```bash
+pip install -e ".[dev]"
+pytest -v
 ```
 
 ## Why Lebre?
