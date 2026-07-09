@@ -1,16 +1,161 @@
 <img src="/assets/icon-lebre.png" alt="Lebre Icon" width="100px" align="right">
 
+# Lebre
 
-# Lebre populator
-A Database Populator is a tool which helps you to populate your projects' database tables with randomly generated content. With this tool you no longer need to write queries or to compile forms by yourself wasting a lot of time before to start to work on your applications.
+A Database Populator — generates random data to fill your project's database tables. No more writing queries or filling forms manually before you can start working on your application.
 
-#### Why Lebre?
+## Installation
 
-Lebres (Hares in english) are animals that usually represent fertility, they are related to several folk manifestations, therefore, there is nothing more fair to populate your database than our Lebre.
+```bash
+git clone https://github.com/luizfpq/lebre.git
+cd lebre
+pip install -e .
+```
 
-# Docs
+After installation the `lebre` command is available globally.
 
- - [ENGLISH (en-us)](README-en-us.md)
- - [PORTUGUÊS (pt-br)](README-pt-br.md)
+For YAML table support install the optional dependency:
+
+```bash
+pip install -e ".[yaml]"
+```
+
+## Quick start
+
+```bash
+# Define a table
+lebre create-table --name tbl_users \
+  --fields "id,cpf,nome,email,telefone" \
+  --types "Serial,CPF,FullName,Email,Phone" \
+  --records 100
+
+# Generate SQL
+lebre populate --format sql
+
+# Or print directly to stdout (pipe to psql, mysql, etc.)
+lebre populate --stdout --format sql | psql mydb
+
+# Generate CSV or JSON
+lebre populate --format csv
+lebre populate --format json --stdout
+```
+
+## CLI reference
+
+```
+lebre create-table   Create a table definition file
+lebre populate       Generate data from existing table definitions
+lebre list-types     Show all available data types
+```
+
+### create-table
+
+| Flag | Description |
+|------|-------------|
+| `--name` | Table name (required) |
+| `--fields` | Comma-separated field names (required) |
+| `--types` | Comma-separated data types (required) |
+| `--records` | Number of records to generate (required) |
+| `--tables-dir` | Directory to save definitions (default: `tables`) |
+| `--table-format` | Output format: `json`, `yaml`, `toml` (default: `json`) |
+
+### populate
+
+| Flag | Description |
+|------|-------------|
+| `--tables-dir` | Directory with table definitions (default: `tables`) |
+| `--output-dir` | Output directory (default: `results`) |
+| `--format` | Output format: `sql`, `csv`, `json` (default: `sql`) |
+| `--dialect` | SQL quoting style: `postgresql`, `mysql`, `sqlite` (default: `postgresql`) |
+| `--stdout` | Print to terminal instead of writing a file |
+
+## Available data types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `Serial` | Auto-increment integer | `Serial` or `Serial:100` |
+| `Integer:min:max` | Random integer in range | `Integer:0:10` |
+| `FullName` | Full name from BR datasource | `FullName` |
+| `FirstName` | First name (derived from FullName) | `FirstName` |
+| `LastName` | Last name (derived from FullName) | `LastName` |
+| `UserName` | Username from full name | `UserName` or `UserName:Num` |
+| `Email` | Email from full name | `Email` |
+| `InitName` | First character of previous name field | `InitName` |
+| `CPF` | Valid Brazilian CPF | `CPF` |
+| `CNPJ` | Valid Brazilian CNPJ | `CNPJ` |
+| `Phone` | Brazilian phone number | `Phone`, `Phone:fixo`, `Phone:11` |
+| `CEP` | Brazilian postal code | `CEP` or `CEP:SP` |
+| `Sex` | Random sex from datasource | `Sex` |
+| `Address` | Street address | `Address` or `Address:Num` |
+| `City` | City name | `City` or `City:SP` |
+| `StateProvince` | State/province | `StateProvince` or `StateProvince:Find` |
+| `Date` | Random date | `Date` or `Date:01/01/1990:31/12/2020` |
+| `DateTime` | Random date + time | `DateTime` |
+| `UUID` | UUID v4 | `UUID` |
+| `Boolean` | TRUE/FALSE or 1/0 | `Boolean` or `Boolean:int` |
+| `Varchar:N` | Random string of length N | `Varchar:10` |
+| `Default:value` | Fixed value for all rows | `Default:'active'` |
+
+## Table definition formats
+
+Tables can be defined in JSON, YAML or TOML:
+
+```json
+[{
+    "TableName": "tbl_users",
+    "FieldList": "id,nome,email",
+    "DataType": "Serial,FullName,Email",
+    "RecordsToGenerate": 50
+}]
+```
+
+```yaml
+TableName: tbl_users
+FieldList: id,nome,email
+DataType: Serial,FullName,Email
+RecordsToGenerate: 50
+```
+
+```toml
+[table]
+TableName = "tbl_users"
+FieldList = "id,nome,email"
+DataType = "Serial,FullName,Email"
+RecordsToGenerate = 50
+```
+
+## SQL dialects
+
+```bash
+lebre populate --format sql --dialect postgresql   # "table" ("col")
+lebre populate --format sql --dialect mysql        # `table` (`col`)
+lebre populate --format sql --dialect sqlite       # table (col)
+```
+
+## Pipeline examples
+
+```bash
+# Seed a PostgreSQL database
+lebre populate --stdout --dialect postgresql | psql -d myapp
+
+# Seed MySQL
+lebre populate --stdout --dialect mysql | mysql myapp
+
+# Generate CSV for data analysis
+lebre populate --format csv --stdout > dataset.csv
+
+# Generate JSON for API mocking
+lebre populate --format json --stdout | jq '.tbl_users[:5]'
+```
+
+## Why Lebre?
+
+Lebres (Hares) are animals that represent fertility in several folk traditions. There is nothing more fitting to populate your database than a Lebre.
+
+## License
+
+GPL v3
+
+---
 
 <a href="https://icons8.com/icon/95136/owl">Lebre icon by Icons8</a>
