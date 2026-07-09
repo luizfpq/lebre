@@ -103,7 +103,7 @@ def cmd_populate(args):
         output_file = os.path.join(output_dir, f"{num:02d}_saida.{output_format}")
 
     if output_format == 'sql':
-        _populate_sql(table_files, output_file)
+        _populate_sql(table_files, output_file, dialect=args.dialect)
     elif output_format == 'csv':
         _populate_csv(table_files, output_file)
     elif output_format == 'json':
@@ -155,7 +155,17 @@ def _generate_values(table_dict):
     return ValueDict, records, field_count
 
 
-def _populate_sql(table_files, output_file):
+def _quote_identifier(name, dialect):
+    """Aplica quoting ao nome de tabela/coluna conforme o dialeto SQL."""
+    if dialect == 'mysql':
+        return f'`{name}`'
+    elif dialect == 'postgresql':
+        return f'"{name}"'
+    else:  # sqlite
+        return name
+
+
+def _populate_sql(table_files, output_file, dialect='postgresql'):
     """Gera saída no formato SQL INSERT."""
     fh = open(output_file, 'w', encoding='utf-8') if output_file else sys.stdout
     try:
@@ -166,7 +176,12 @@ def _populate_sql(table_files, output_file):
             table_name = get_table_name(table_dict)
             ValueDict, records, field_count = _generate_values(table_dict)
 
-            fh.write(f'INSERT INTO\n\t"{table_name}" ({table_dict[0]["FieldList"]})\nVALUES\n')
+            # Quoting do nome da tabela e campos
+            quoted_table = _quote_identifier(table_name, dialect)
+            fields = [f.strip() for f in table_dict[0]['FieldList'].split(',')]
+            quoted_fields = ', '.join(_quote_identifier(f, dialect) for f in fields)
+
+            fh.write(f'INSERT INTO\n\t{quoted_table} ({quoted_fields})\nVALUES\n')
 
             for i in range(records):
                 values = ', '.join(str(ValueDict[col][i]) for col in range(field_count))
@@ -286,6 +301,8 @@ def build_parser():
     pop.add_argument('--output-dir', default='results', help='Diretório de saída (default: results)')
     pop.add_argument('--format', choices=['sql', 'csv', 'json'], default='sql',
                      help='Formato de saída (default: sql)')
+    pop.add_argument('--dialect', choices=['postgresql', 'mysql', 'sqlite'], default='postgresql',
+                     help='Dialeto SQL para quoting (default: postgresql)')
     pop.add_argument('--stdout', action='store_true',
                      help='Imprime no terminal em vez de salvar em arquivo')
     pop.set_defaults(func=cmd_populate)
