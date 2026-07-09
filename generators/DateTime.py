@@ -1,80 +1,99 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-""" 
-    A Database Populator is a tool which helps you to populate your projects' database tables 
-    with randomly generated content. With this tool you no longer need to write queries or to 
-    compile forms by yourself wasting a lot of time before to start to work on your applications.
-"""
-__author__ = "Luiz F. P. Quirino"
-__copyright__ = "Copyleft 2020, Planet Earth"
-__credits__ = ["LuizQuirino"]
-__license__ = "GPL v3"
-__version__ = "2.0.1"
-__maintainer__ = "LuizQuirino"
-__email__ = "luizfpq@gmail.com"
-__status__ = "Dev"
+"""Geradores de tipos de data e hora."""
+
+from __future__ import annotations
 
 import random
 import time
+from typing import TYPE_CHECKING
 
-def str_time_prop(start, end, fmt, prop):
-    """Get a time at a proportion of a range of two formatted times.
+__all__ = ["Date", "DateTime"]
 
-    start and end should be strings specifying times formatted in the
-    given format (strftime-style), giving an interval [start, end].
-    prop specifies how a proportion of the interval to be taken after
-    start.  The returned time will be in the specified format.
+
+class GeneratorError(Exception):
+    """Erro de configuração ou execução de um gerador."""
+
+
+def _random_timestamp(start_ts: float, end_ts: float) -> float:
+    """Retorna timestamp aleatório entre start_ts e end_ts."""
+    return start_ts + random.random() * (end_ts - start_ts)
+
+
+def _parse_date_range(data_type: str, fmt: str, default_start: str, default_end: str) -> tuple[float, float]:
     """
-
-    stime = time.mktime(time.strptime(start, fmt))
-    etime = time.mktime(time.strptime(end, fmt))
-
-    ptime = stime + prop * (etime - stime)
-
-    return time.strftime(fmt, time.localtime(ptime))
-
-
-def random_date_time(start, end, prop):
-    rand_datetime = str_time_prop(start, end, '%d/%m/%Y %I:%M %p', prop)
-    return '\''+rand_datetime+'\''
-
-def random_date(start, end, prop):
-    rand_date = str_time_prop(start, end, '%d/%m/%Y', prop)
-    return '\''+rand_date+'\''
-
-
-def Date(records_to_generate, data_type):
-    """
-    Gera uma lista de datas aleatórias.
-    USO:
-        Date                        -> data entre 01/01/1970 e 01/01/2000
-        Date:01/01/1990:31/12/2020  -> data no intervalo especificado
+    Extrai e valida intervalo de datas do data_type.
+    Retorna (start_timestamp, end_timestamp).
     """
     if ":" in data_type:
-        parts = data_type.split(":")
-        start = parts[1]
-        end = parts[2]
+        parts = data_type.split(":", 2)
+        if len(parts) < 3:
+            raise GeneratorError(
+                f"Formato inválido: '{data_type}'. "
+                f"Esperado: Tipo:inicio:fim (ex: Date:01/01/2020:31/12/2020)"
+            )
+        start_str, end_str = parts[1], parts[2]
     else:
-        start = "1/1/1970"
-        end = "1/1/2000"
+        start_str, end_str = default_start, default_end
 
-    data_list = []
-    for _ in range(records_to_generate):
-        data_list.append(random_date(start, end, random.random()))
-    return data_list
+    try:
+        start_ts = time.mktime(time.strptime(start_str, fmt))
+    except (ValueError, OverflowError) as exc:
+        raise GeneratorError(
+            f"Data de início inválida: '{start_str}'. Formato esperado: {fmt}"
+        ) from exc
+
+    try:
+        end_ts = time.mktime(time.strptime(end_str, fmt))
+    except (ValueError, OverflowError) as exc:
+        raise GeneratorError(
+            f"Data de fim inválida: '{end_str}'. Formato esperado: {fmt}"
+        ) from exc
+
+    if start_ts > end_ts:
+        raise GeneratorError(
+            f"Data de início ({start_str}) é posterior à data de fim ({end_str})"
+        )
+
+    return start_ts, end_ts
 
 
-def DateTime(records_to_generate, data_type):
+def Date(records_to_generate: int, data_type: str) -> list[str]:
     """
-    Gera uma lista de datas com hora aleatórias.
-    USO:
-        DateTime                                        -> entre 01/01/1970 e 01/01/2000
-        DateTime:01/01/1990 8:00 AM:31/12/2020 6:00 PM -> intervalo especificado
-    """
-    start = "1/1/1970 12:00 AM"
-    end = "1/1/2000 11:59 PM"
+    Gera datas aleatórias no formato dd/mm/yyyy.
 
-    data_list = []
+    Uso:
+        Date                        -> entre 01/01/1970 e 01/01/2000
+        Date:01/01/1990:31/12/2020  -> intervalo especificado
+    """
+    if records_to_generate <= 0:
+        raise GeneratorError(f"records_to_generate deve ser > 0, recebeu {records_to_generate}")
+
+    fmt = '%d/%m/%Y'
+    start_ts, end_ts = _parse_date_range(data_type, fmt, "01/01/1970", "01/01/2000")
+
+    results = []
     for _ in range(records_to_generate):
-        data_list.append(random_date_time(start, end, random.random()))
-    return data_list
+        ts = _random_timestamp(start_ts, end_ts)
+        results.append("'" + time.strftime(fmt, time.localtime(ts)) + "'")
+    return results
+
+
+def DateTime(records_to_generate: int, data_type: str) -> list[str]:
+    """
+    Gera datas com hora aleatórias no formato dd/mm/yyyy HH:MM AM/PM.
+
+    Uso:
+        DateTime  -> entre 01/01/1970 e 01/01/2000
+    """
+    if records_to_generate <= 0:
+        raise GeneratorError(f"records_to_generate deve ser > 0, recebeu {records_to_generate}")
+
+    fmt = '%d/%m/%Y %I:%M %p'
+    start_ts = time.mktime(time.strptime("01/01/1970 12:00 AM", fmt))
+    end_ts = time.mktime(time.strptime("01/01/2000 11:59 PM", fmt))
+
+    results = []
+    for _ in range(records_to_generate):
+        ts = _random_timestamp(start_ts, end_ts)
+        results.append("'" + time.strftime(fmt, time.localtime(ts)) + "'")
+    return results
